@@ -20,11 +20,10 @@ modules:
   - type: rpm-ostree
     repos:
       # - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo
-      - https://repo.fortinet.com/repo/forticlient/7.4/centos/8/os/x86_64/fortinet.repo
     install:
       # - micro
       # - starship
-      - forticlient
+      - https://filestore.fortinet.com/forticlient/forticlient_vpn_7.4.0.1636_x86_64.rpm
     # remove:
     #   # example: removing firefox (in favor of the flatpak)
     #   # "firefox" is the main package, "firefox-langpacks" is a dependency
