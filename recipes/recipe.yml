@@ -7,7 +7,7 @@ description: Aurora Developer Experience Hardware Enablement with some extra gra
 
 # the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/aurora-dx-hwe
-image-version: stable # latest is also supported if you want new updates ASAP
+image-version: latest # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
