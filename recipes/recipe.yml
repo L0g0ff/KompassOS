@@ -16,19 +16,28 @@ modules:
     files:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+  
+  - type: script
+    snippets:
+      - "mkdir /tmp/rpm/"
+      - "curl -L https://download.keepersecurity.com/desktop_electron/Linux/repo/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm -o /tmp/rpm/keeperpasswordmanager.rpm"
 
   - type: rpm-ostree
     repos:
-      # - https://copr.fedorainfracloud.org/coprs/atim/starship/repo/fedora-%OS_VERSION%/atim-starship-fedora-%OS_VERSION%.repo
+      - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
+    keys:
+      - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    optfix:
+      - brave.com # needed because brave installs into /opt/brave ??
     install:
-      # - micro
-      # - starship
-      - https://filestore.fortinet.com/forticlient/forticlient_vpn_7.4.0.1636_x86_64.rpm
-    # remove:
-    #   # example: removing firefox (in favor of the flatpak)
-    #   # "firefox" is the main package, "firefox-langpacks" is a dependency
-    #   - firefox
-    #   - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+      - brave-browser
+      - /tmp/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm
+    remove:
+      - firefox-langpacks
+
+  - type: script
+    snippets:
+      - "rm -rf /tmp/rpm/" #cleanup
 
   # - type: default-flatpaks
   #   notify: true # Send notification after install/uninstall is finished (true/false)
