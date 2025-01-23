@@ -20,7 +20,7 @@ modules:
   - type: script
     snippets:
       - "mkdir /tmp/rpm/"
-      - "curl -L https://download.keepersecurity.com/desktop_electron/Linux/repo/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm -o /tmp/rpm/keeperpasswordmanager.rpm"
+      - "curl -L https://download.keepersecurity.com/desktop_electron/Linux/repo/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm -o /tmp/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm"
 
   - type: rpm-ostree
     repos:
