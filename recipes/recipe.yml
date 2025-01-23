@@ -32,8 +32,6 @@ modules:
     install:
       - brave-browser
       - /tmp/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm
-    remove:
-      - firefox-langpacks
 
   - type: script
     snippets:
