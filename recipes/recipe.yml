@@ -9,8 +9,13 @@ description: Aurora Developer Experience Hardware Enablement with some extra gra
 base-image: ghcr.io/ublue-os/aurora-dx-hwe
 image-version: latest # latest is also supported if you want new updates ASAP
 
+# Validate recipe
+# bluebuild validate --all-errors ./recipes/recipe.yml
+
+
 # module configuration, executed in order
 # you can include multiple instances of the same module
+
 modules:
   - type: files
     files:
@@ -18,35 +23,8 @@ modules:
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
   
   - type: script
-    snippets:
-      - "mkdir /tmp/rpm/"
-      - "curl -L https://download.keepersecurity.com/desktop_electron/Linux/repo/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm -o /tmp/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm"
-
-  - type: rpm-ostree
-    repos:
-      - https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
-    keys:
-      - https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-    optfix:
-      - brave.com # needed because brave installs into /opt/brave ??
-    install:
-      - brave-browser
-      - /tmp/rpm/keeperpasswordmanager-16.11.3-1.x86_64.rpm
-
-  - type: script
-    snippets:
-      - "rm -rf /tmp/rpm/" #cleanup
-
-  # - type: default-flatpaks
-  #   notify: true # Send notification after install/uninstall is finished (true/false)
-  #   system:
-  #     # If no repo information is specified, Flathub will be used by default
-  #     install:
-  #       - org.mozilla.firefox
-  #       - org.gnome.Loupe
-  #     remove:
-  #       - org.gnome.eog
-  #   user: {} # Also add Flathub user repo, but no user packages
+    scripts:
+      - custom-apps.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
