@@ -15,11 +15,11 @@ curl -sL -o /tmp/keeper.rpm "https://download.keepersecurity.com/desktop_electro
 rpm-ostree install /tmp/keeper.rpm
 
 #
-# Citrix Workspace
+# Citrix Workspace - Grumble crappy Citrix mirror...
 #
-echo 'Download and Install Citrix Client'
-curl -sL -o /tmp/citrix.rpm "https://downloads.citrix.com/23169/ICAClient-rhel-24.11.0.85-0.x86_64.rpm?__gda__=exp=1737740175~acl=/*~hmac=91f04a83f0adacdf352312e8a1f8fbab6cee2e42c2841f878f280adf5388002f"
-rpm-ostree install /tmp/citrix.rpm
+# echo 'Download and Install Citrix Client'
+# curl -sL -o /tmp/citrix.rpm "https://downloads.citrix.com/23169/ICAClient-rhel-24.11.0.85-0.x86_64.rpm?__gda__=exp=1737740175~acl=/*~hmac=91f04a83f0adacdf352312e8a1f8fbab6cee2e42c2841f878f280adf5388002f"
+# rpm-ostree install /tmp/citrix.rpm
 
 #
 # Remote Desktop Manager
