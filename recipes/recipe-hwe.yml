@@ -21,11 +21,14 @@ modules:
     files:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+
+  - type: akmods
+    install:
+      - evdi
   
   - type: script
     scripts:
       - custom-apps.sh
-      - displaylink.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
