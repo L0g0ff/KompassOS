@@ -1,16 +1,16 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: KompassOS-dx-nvidia
+name: KompassOS-dx-hwe
 # description will be included in the image's metadata
-description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
+description: Aurora Developer Experience Hardware Enablement with some extra gravy.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx-nvidia
+base-image: ghcr.io/ublue-os/aurora-dx-hwe
 image-version: latest # latest is also supported if you want new updates ASAP
 
 # Validate recipe
-# bluebuild validate --all-errors ./recipes/recipe-nvidia.yml
+# bluebuild validate --all-errors ./recipes/recipe-hwe.yml
 
 
 # module configuration, executed in order
@@ -21,11 +21,7 @@ modules:
     files:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-
-  - type: akmods
-    install:
-      - evdi
-  
+ 
   - type: script
     scripts:
       - custom-apps.sh
