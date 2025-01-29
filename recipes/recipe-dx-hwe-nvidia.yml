@@ -25,6 +25,7 @@ modules:
   - type: script
     scripts:
       - custom-apps.sh
+      - google-chrome.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
