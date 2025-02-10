@@ -15,11 +15,17 @@ set -x
 # rpm-ostree install /tmp/keeper.rpm
 
 #
-# Citrix Workspace - Grumble crappy Citrix mirror...
+# Some basic tools
 #
-# echo 'Download and Install Citrix Client'
-# curl -sL -o /tmp/citrix.rpm "https://downloads.citrix.com/23169/ICAClient-rhel-24.11.0.85-0.x86_64.rpm?__gda__=exp=1737740175~acl=/*~hmac=91f04a83f0adacdf352312e8a1f8fbab6cee2e42c2841f878f280adf5388002f"
-# rpm-ostree install /tmp/citrix.rpm
+rpm-ostree install nmap
+rpm-ostree install telnet
+
+#
+# Citrix Workspace from custom Repo
+#
+echo 'Download and Install Citrix Client'
+curl -sL -o /tmp/citrix.rpm "https://repo1.famvoll.nl/ICAClient-rhel-24.11.0.85-0.x86_64.rpm"
+rpm-ostree install /tmp/citrix.rpm
 
 # #
 # # Remote Desktop Manager - USE Distrobox for better keeper support.
