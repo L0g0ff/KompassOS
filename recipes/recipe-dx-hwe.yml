@@ -29,3 +29,12 @@ modules:
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
+    type: rpm-ostree
+    repos:
+      - https://repo1.famvoll.nl/kompass.repo
+    optfix:
+      - ICAClient # needed because ICAClient installs into /opt/ICAClient
+      - zoom # needed because ICAClient installs into /opt/ICAClient
+    install:
+      - ICAClient
+      - zoom

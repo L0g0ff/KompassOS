@@ -20,12 +20,12 @@ set -x
 rpm-ostree install nmap
 rpm-ostree install telnet
 
-#
-# Citrix Workspace from custom Repo
-#
-echo 'Download and Install Citrix Client'
-curl -sL -o /tmp/citrix.rpm "https://repo1.famvoll.nl/ICAClient-rhel-24.11.0.85-0.x86_64.rpm"
-rpm-ostree install /tmp/citrix.rpm
+# #
+# # Citrix Workspace from custom Repo
+# #
+# echo 'Download and Install Citrix Client'
+# curl -sL -o /tmp/citrix.rpm "https://repo1.famvoll.nl/ICAClient-rhel-24.11.0.85-0.x86_64.rpm"
+# rpm-ostree install /tmp/citrix.rpm
 
 #
 # Zoom native client (because unstable flatpak)
@@ -74,3 +74,21 @@ rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-keeper
 rpm-ostree install keeperpasswordmanager
 
 rm /etc/yum.repos.d/keeper.repo -f
+
+
+
+# #
+# # Citrix Workspace from custom Repo
+# #
+# # Setup repo
+# cat << EOF > /etc/yum.repos.d/kompass.repo
+# [kompass-addons]
+# name=kompass-addons
+# baseurl=https://repo1.famvoll.nl
+# enabled=1
+# gpgcheck=0
+# EOF
+
+# rpm-ostree install ICAClient
+
+#rm /etc/yum.repos.d/kompass.repo -f
