@@ -27,12 +27,12 @@ rpm-ostree install telnet
 # curl -sL -o /tmp/citrix.rpm "https://repo1.famvoll.nl/ICAClient-rhel-24.11.0.85-0.x86_64.rpm"
 # rpm-ostree install /tmp/citrix.rpm
 
-#
-# Zoom native client (because unstable flatpak)
-#
-echo 'Download and Install Zoom Client'
-curl -sL -o /tmp/zoom_x86_64.rpm "https://zoom.us/client/6.3.6.6315/zoom_x86_64.rpm"
-rpm-ostree install /tmp/zoom_x86_64.rpm
+# #
+# # Zoom native client (because unstable flatpak)
+# #
+# echo 'Download and Install Zoom Client'
+# curl -sL -o /tmp/zoom_x86_64.rpm "https://zoom.us/client/6.3.6.6315/zoom_x86_64.rpm"
+# rpm-ostree install /tmp/zoom_x86_64.rpm
 
 # #
 # # Remote Desktop Manager - USE Distrobox for better keeper support.
