@@ -17,8 +17,7 @@ set -x
 #
 # Some basic tools
 #
-rpm-ostree install nmap
-rpm-ostree install telnet
+rpm-ostree install nmap telnet screen
 
 # #
 # # Citrix Workspace from custom Repo
@@ -92,3 +91,8 @@ rm /etc/yum.repos.d/keeper.repo -f
 # rpm-ostree install ICAClient
 
 #rm /etc/yum.repos.d/kompass.repo -f
+
+#
+# Fix SSH priv ports
+#
+echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf
