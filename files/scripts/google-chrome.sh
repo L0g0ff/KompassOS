@@ -24,19 +24,19 @@ cat << EOF > /etc/yum.repos.d/google-chrome.repo
 name=google-chrome
 baseurl=https://dl.google.com/linux/chrome/rpm/stable/\$basearch
 enabled=1
-gpgcheck=0
-repo_gpgcheck=0
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-google
 EOF
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-google
 
 # Prepare alternatives directory
 mkdir -p /var/lib/alternatives
 
-# # Import signing key - Disabled because of errors in google certifcate
-# curl --retry 3 --retry-delay 2 --retry-all-errors -sL \
-#   -o /etc/pki/rpm-gpg/RPM-GPG-KEY-google \
-#   https://dl.google.com/linux/linux_signing_key.pub
-# rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-google
+# Import signing key - Disabled because of errors in google certifcate
+curl --retry 3 --retry-delay 2 --retry-all-errors -sL \
+  -o /etc/pki/rpm-gpg/RPM-GPG-KEY-google \
+  https://dl.google.com/linux/linux_signing_key.pub
+rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-google
 
 # Now let's install the packages.
 rpm-ostree install google-chrome-stable
