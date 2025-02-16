@@ -39,7 +39,7 @@ mkdir -p /var/lib/alternatives
 # rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-google
 
 # Now let's install the packages.
-dnf install -y google-chrome-stable
+rpm-ostree install google-chrome-stable
 
 # Clean up the yum repo (updates are baked into new images)
 rm /etc/yum.repos.d/google-chrome.repo -f
