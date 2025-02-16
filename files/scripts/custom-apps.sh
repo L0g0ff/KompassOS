@@ -15,9 +15,9 @@ set -x
 # rpm-ostree install /tmp/keeper.rpm
 
 #
-# Some basic tools
+# Some basic tools and libvirt-devel for vagrant
 #
-rpm-ostree install nmap telnet screen
+rpm-ostree install nmap telnet screen libvirt-devel
 
 # #
 # # Citrix Workspace from custom Repo
