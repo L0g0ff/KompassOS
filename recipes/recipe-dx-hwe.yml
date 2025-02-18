@@ -43,3 +43,5 @@ modules:
     install:
       - ICAClient
       - zoom
+
+  - type: initramfs #needed for plymouth
