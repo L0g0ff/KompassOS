@@ -1,7 +1,11 @@
+# Test this Just file: /usr/bin/just --justfile files/justfiles/kompassos.just
+
 # Install vagrant https://thenets.org/running-vagrant-libvirt-on-bluefin-or-aurora/
 [group('Apps')]
 install-vagrant:
     #!/usr/bin/env bash
+    # Install the libvirt-devel - libvirt-devel already installed in KompassOS
+    # rpm-ostree install libvirt-devel
     # Add the hashicorp/tap repo
     brew tap hashicorp/tap
     # Install vagrant for Linux
@@ -12,7 +16,8 @@ install-vagrant:
 # Setup NetExtender VPN with Vagrant
 [group('Apps')]
 setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" target_dir="":
-    #!/usr/bin/bash
+    #!/usr/bin/env bash
+    set -euo pipefail
     source /usr/lib/ujust/ujust.sh
 
     # Check if vagrant is installed
@@ -102,76 +107,75 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
         VPN_USER="{{ vpn_user }}"
     fi
 
-    # Create Vagrantfile in the target directory
-    cat > "$TARGET_DIR/Vagrantfile" << EOF
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu2204"
-  config.vm.box_version = "4.3.12"
-
-  config.vm.network "private_network", ip: "192.168.121.10"
-
-  config.vm.provider "libvirt" do |libvirt|
-    libvirt.cpus = 1
-    libvirt.memory = 1024
-  end
-
-  # Create user and set up SSH key
-  if "$SSH_PUBLIC_KEY" != ""
-    config.vm.provision "shell", inline: <<-SHELL
-      # Create user if it doesn't exist
-      if ! id -u $CURRENT_USER >/dev/null 2>&1; then
-        useradd -m -s /bin/bash $CURRENT_USER
-        # Add user to sudo group
-        usermod -aG sudo $CURRENT_USER
-        # Set up password-less sudo for the user
-        echo "$CURRENT_USER ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$CURRENT_USER
-      fi
-
-      # Set up SSH key
-      mkdir -p /home/$CURRENT_USER/.ssh
-      echo "$SSH_PUBLIC_KEY" > /home/$CURRENT_USER/.ssh/authorized_keys
-      chmod 700 /home/$CURRENT_USER/.ssh
-      chmod 600 /home/$CURRENT_USER/.ssh/authorized_keys
-      chown -R $CURRENT_USER:$CURRENT_USER /home/$CURRENT_USER/.ssh
-    SHELL
-  end
-
-  config.vm.provision "shell", inline: <<-SHELL
-    printf "\\nDisk free space before...\\n"
-    df -lhT /
-    apt-get update
-    apt-get install -y default-jre wget
-    printf "\\nAllowTcpForwarding..\\n"
-    sudo sed -i "s/#AllowTcpForwarding yes/AllowTcpForwarding yes/g" /etc/ssh/sshd_config
-    wget https://software.sonicwall.com/NetExtender/NetExtender-linux-amd64-10.3.0-21.tar.gz
-    tar -zxvf NetExtender-linux-amd64-10.3.0-21.tar.gz
-    cd netextender
-    sudo ./install.sh
-
-    sudo cat >/etc/networkd-dispatcher/routable.d/50-ifup-hooks <<EOFHOOK
-#!/bin/sh
-if ! iptables -t nat -C POSTROUTING -o snwl_ssltunnel -j MASQUERADE 2>/dev/null
-then
-    nxcli connection delete ${VPN_DOMAIN}
-    nxcli connection add ${VPN_DOMAIN} --server ${VPN_SERVER}:${VPN_PORT} --username=${VPN_USER} --password=CHANGE_ME --domain=${VPN_DOMAIN} --protocol Auto
-    echo 1 > /proc/sys/net/ipv4/ip_forward
-    iptables -t nat -A POSTROUTING -o snwl_ssltunnel -j MASQUERADE
-fi
-exit 0
-EOFHOOK
-
-    sudo chmod 755 /etc/networkd-dispatcher/routable.d/50-ifup-hooks
-
-    sudo echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/ip_forward.conf
-    echo "add the following to the host system: ip route add 10.5.50.0/24 via 192.168.121.10"
-    echo "to connect use: nxcli connect ${VPN_DOMAIN}"
-    reboot
-  SHELL
-end
-EOF
+    # Write Vagrantfile
+    {
+        echo '# -*- mode: ruby -*-'
+        echo '# vi: set ft=ruby :'
+        echo ''
+        echo 'Vagrant.configure("2") do |config|'
+        echo '  config.vm.box = "generic/ubuntu2204"'
+        echo '  config.vm.box_version = "4.3.12"'
+        echo ''
+        echo '  config.vm.network "private_network", ip: "192.168.121.10"'
+        echo ''
+        echo '  config.vm.provider "libvirt" do |libvirt|'
+        echo '    libvirt.cpus = 1'
+        echo '    libvirt.memory = 1024'
+        echo '  end'
+        echo ''
+        if [ -n "$SSH_PUBLIC_KEY" ]; then
+            echo '  config.vm.provision "shell", inline: <<-SHELL'
+            echo '    # Create user if it doesn'"'"'t exist'
+            echo "    if ! id -u $CURRENT_USER >/dev/null 2>&1; then"
+            echo "      useradd -m -s /bin/bash $CURRENT_USER"
+            echo "      # Add user to sudo group"
+            echo "      usermod -aG sudo $CURRENT_USER"
+            echo "      # Set up password-less sudo for the user"
+            echo "      echo '$CURRENT_USER ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$CURRENT_USER"
+            echo "    fi"
+            echo ''
+            echo "    # Set up SSH key"
+            echo "    mkdir -p /home/$CURRENT_USER/.ssh"
+            echo "    echo '$SSH_PUBLIC_KEY' > /home/$CURRENT_USER/.ssh/authorized_keys"
+            echo "    chmod 700 /home/$CURRENT_USER/.ssh"
+            echo "    chmod 600 /home/$CURRENT_USER/.ssh/authorized_keys"
+            echo "    chown -R $CURRENT_USER:$CURRENT_USER /home/$CURRENT_USER/.ssh"
+            echo '  SHELL'
+            echo ''
+        fi
+        echo '  config.vm.provision "shell", inline: <<-SHELL'
+        echo '    printf "\nDisk free space before...\n"'
+        echo '    df -lhT /'
+        echo '    apt-get update'
+        echo '    apt-get install -y default-jre wget'
+        echo '    printf "\nAllowTcpForwarding..\n"'
+        echo '    sudo sed -i "s/#AllowTcpForwarding yes/AllowTcpForwarding yes/g" /etc/ssh/sshd_config'
+        echo '    wget https://software.sonicwall.com/NetExtender/NetExtender-linux-amd64-10.3.0-21.tar.gz'
+        echo '    tar -zxvf NetExtender-linux-amd64-10.3.0-21.tar.gz'
+        echo '    cd netextender'
+        echo '    sudo ./install.sh'
+        echo ''
+        echo '    sudo cat >/etc/networkd-dispatcher/routable.d/50-ifup-hooks <<EOFHOOK'
+        echo '#!/bin/sh'
+        echo 'if ! iptables -t nat -C POSTROUTING -o snwl_ssltunnel -j MASQUERADE 2>/dev/null'
+        echo 'then'
+        echo "    nxcli connection delete $VPN_DOMAIN"
+        echo "    nxcli connection add $VPN_DOMAIN --server $VPN_SERVER:$VPN_PORT --username=$VPN_USER --password=CHANGE_ME --domain=$VPN_DOMAIN --protocol Auto"
+        echo '    echo 1 > /proc/sys/net/ipv4/ip_forward'
+        echo '    iptables -t nat -A POSTROUTING -o snwl_ssltunnel -j MASQUERADE'
+        echo 'fi'
+        echo 'exit 0'
+        echo 'EOFHOOK'
+        echo ''
+        echo '    sudo chmod 755 /etc/networkd-dispatcher/routable.d/50-ifup-hooks'
+        echo ''
+        echo '    sudo echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/ip_forward.conf'
+        echo '    echo "add the following to the host system: ip route add 10.5.50.0/24 via 192.168.121.10"'
+        echo "    echo \"to connect use: nxcli connect""
+        echo '    reboot'
+        echo '  SHELL'
+        echo 'end'
+    } > "$TARGET_DIR/Vagrantfile"
 
     echo "${green}${bold}Vagrantfile created successfully in: ${TARGET_DIR}${normal}"
     echo "Note: You'll need to modify the password in the generated Vagrantfile before using it."
