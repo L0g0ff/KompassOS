@@ -10,7 +10,10 @@ base-image: ghcr.io/ublue-os/aurora-dx-hwe
 image-version: 41 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
-# bluebuild validate --all-errors ./recipes/recipe-hwe.yml
+# bluebuild validate --all-errors ./recipes/recipe-dx-hwe.yml
+
+# Local build test
+# bluebuild build ./recipes/recipe-dx-hwe.yml 
 
 
 # module configuration, executed in order
