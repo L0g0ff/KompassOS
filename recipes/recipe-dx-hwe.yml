@@ -43,10 +43,5 @@ modules:
     install:
       - ICAClient
       - zoom
-    remove:
-      - kernel 
-      - kernel-core 
-      - kernel-modules 
-      - kernel-modules-extra
 
   - type: initramfs #needed for plymouth
