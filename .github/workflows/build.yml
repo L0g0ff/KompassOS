@@ -8,8 +8,6 @@ on:
     branches:
       - ${CI_DEFAULT_BRANCH}
       - main
-    branches-ignore:
-      - dev
     paths-ignore: # don't rebuild if only documentation has changed
       - "**.md"
 
