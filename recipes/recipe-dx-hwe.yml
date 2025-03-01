@@ -40,12 +40,12 @@ modules:
   - type: rpm-ostree
     repos:
       - https://repo1.famvoll.nl/rpm/kompass.repo
-    optfix:
-      - ICAClient # needed because ICAClient installs into /opt/ICAClient
-      - zoom
-      - rambox
     install:
       - ICAClient
+      - zoom
+      - rambox
+    optfix:
+      - ICAClient # needed because ICAClient installs into /opt/ICAClient
       - zoom
       - rambox
 
