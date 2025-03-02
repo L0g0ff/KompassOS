@@ -46,7 +46,7 @@ modules:
       - rambox
     optfix:
       - Citrix
-      - Zoom
+      - zoom
       - Rambox
 
   - type: initramfs #needed for plymouth
