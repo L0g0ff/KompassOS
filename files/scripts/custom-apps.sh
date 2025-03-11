@@ -8,9 +8,9 @@ set -x
 # Interesting Repo (Thanks!) https://github.com/sneexy-boi/bluebuild-custom/blob/main/files/scripts/system-wuzetka.sh
 
 #
-# Some basic tools and libvirt-devel for vagrant
+# Some basic tools, plymouth-plugin-script for bootloader and libvirt-devel for vagrant
 #
-rpm-ostree install nmap telnet screen libvirt-devel tilix
+rpm-ostree install nmap telnet screen libvirt-devel tilix plymouth-plugin-script
 
 #
 # Keeper
