@@ -2,7 +2,6 @@
 ## Mail : adi1090x@gmail.com
 ## Github : @adi1090x
 ## Reddit : @adi1090x
-## Modified to support system functions
 
 // Screen size
 screen.w = Window.GetWidth(0);
@@ -26,19 +25,6 @@ bullet.image = Image.Text("*", 1, 1, 1);
 state.status = "play";
 state.time = 0.0;
 
-// System status variabelen
-status = "normal";
-progress = 0;
-is_updating = false;
-is_upgrading = false;
-is_firmware_upgrading = false;
-is_resetting = false;
-progress_bar_enabled = false;
-show_percentage = false;
-message_suppress = false;
-current_title = "";
-current_subtitle = "";
-
 //--------------------------------- Refresh (Logo animation) --------------------------
 
 # cycle through all images
@@ -50,89 +36,17 @@ flyingman_sprite = Sprite();
 flyingman_sprite.SetX(Window.GetX() + (Window.GetWidth(0) / 2 - flyingman_image[0].GetWidth() / 2)); # Place images in the center
 flyingman_sprite.SetY(Window.GetY() + (Window.GetHeight(0) / 2 - flyingman_image[0].GetHeight() / 2));
 
-// Progress bar functionaliteit
-progress_bar_sprite = null;
-percentage_sprite = null;
-title_sprite = null;
-subtitle_sprite = null;
+progress = 0;
 
-fun draw_progress_bar() {
-    if (progress_bar_enabled) {
-        bar_width = screen.w * 0.6;
-        bar_height = 20;
-        
-        // Achtergrond van de progress bar
-        background_bar = Image.Rectangle(bar_width, bar_height, 0x606060);
-        progress_bar_background = Sprite(background_bar);
-        progress_bar_background.SetX(screen.half.w - bar_width / 2);
-        progress_bar_background.SetY(screen.half.h + 50);
-        
-        // Voortgang van de progress bar
-        if (Plymouth.GetMode() != "boot" || progress < 0.1)
-            progress = 0.1;
-        if (progress > 1.0)
-            progress = 1.0;
-            
-        foreground_width = bar_width * progress;
-        foreground_bar = Image.Rectangle(foreground_width, bar_height, 0xffffff);
-        progress_bar_sprite = Sprite(foreground_bar);
-        progress_bar_sprite.SetX(screen.half.w - bar_width / 2);
-        progress_bar_sprite.SetY(screen.half.h + 50);
-        
-        // Percentage tekst als dat ingeschakeld is
-        if (show_percentage) {
-            percentage_text = Math.Int(progress * 100) + "%";
-            percentage_image = Image.Text(percentage_text, 1, 1, 1);
-            if (percentage_sprite != null)
-                percentage_sprite.SetImage(percentage_image);
-            else {
-                percentage_sprite = Sprite(percentage_image);
-                percentage_sprite.SetX(screen.half.w - percentage_image.GetWidth() / 2);
-                percentage_sprite.SetY(screen.half.h + 50 + bar_height + 10);
-            }
-        }
-        
-        // Titel en subtitel
-        if (current_title != "") {
-            title_image = Image.Text(current_title, 1, 1, 1);
-            if (title_sprite != null)
-                title_sprite.SetImage(title_image);
-            else {
-                title_sprite = Sprite(title_image);
-                title_sprite.SetX(screen.half.w - title_image.GetWidth() / 2);
-                title_sprite.SetY(screen.half.h - 50);
-            }
-        }
-        
-        if (current_subtitle != "") {
-            subtitle_image = Image.Text(current_subtitle, 1, 1, 1);
-            if (subtitle_sprite != null)
-                subtitle_sprite.SetImage(subtitle_image);
-            else {
-                subtitle_sprite = Sprite(subtitle_image);
-                subtitle_sprite.SetX(screen.half.w - subtitle_image.GetWidth() / 2);
-                subtitle_sprite.SetY(screen.half.h - 20);
-            }
-        }
-    }
-}
-
-animation_progress = 0;
-fun refresh_callback() {
-    if (state.status == "play") {
-        flyingman_sprite.SetImage(flyingman_image[Math.Int(animation_progress / 3) % 192]);
-        animation_progress++;
-    }
-    
-    // Teken de progress bar als die ingeschakeld is
-    if (progress_bar_enabled) {
-        draw_progress_bar();
-    }
-}
+fun refresh_callback ()
+  {
+    flyingman_sprite.SetImage(flyingman_image[Math.Int(progress / 3) % 192]);
+    progress++;
+  }
   
-Plymouth.SetRefreshFunction(refresh_callback);
+Plymouth.SetRefreshFunction (refresh_callback);
 
-//------------------------------------- Question prompt -------------------------------
+//------------------------------------- Password prompt -------------------------------
 fun DisplayQuestionCallback(prompt, entry) {
     question = null;
     answer = null;
@@ -186,75 +100,9 @@ Plymouth.SetDisplayNormalFunction(DisplayNormalCallback);
 
 //----------------------------------------- Message --------------------------------
 fun MessageCallback(text) {
-    if (!message_suppress) {
-        message.image = Image.Text(text, 1, 1, 1);
-        message.sprite = Sprite(message.image);
-        message.sprite.SetPosition(screen.half.w - message.image.GetWidth() / 2, message.image.GetHeight());
-    }
+    message.image = Image.Text(text, 1, 1, 1);
+    message.sprite = Sprite(message.image);
+    message.sprite.SetPosition(screen.half.w - message.image.GetWidth() / 2, message.image.GetHeight());
 }
 Plymouth.SetMessageFunction(MessageCallback);
 
-//-------------------------- System update status functies -----------------------
-fun UpdateStatusCallback(status) {
-    if (status == "updates") {
-        is_updating = true;
-        progress_bar_enabled = true;
-        show_percentage = true;
-        message_suppress = true;
-        current_title = "Installing Updates...";
-        current_subtitle = "Do not turn off your computer";
-    }
-    else if (status == "system-upgrade") {
-        is_upgrading = true;
-        progress_bar_enabled = true;
-        show_percentage = true;
-        message_suppress = true;
-        current_title = "Upgrading System...";
-        current_subtitle = "Do not turn off your computer";
-    }
-    else if (status == "firmware-upgrade") {
-        is_firmware_upgrading = true;
-        progress_bar_enabled = true;
-        show_percentage = true;
-        message_suppress = true;
-        current_title = "Upgrading Firmware...";
-        current_subtitle = "Do not turn off your computer";
-    }
-    else if (status == "system-reset") {
-        is_resetting = true;
-        progress_bar_enabled = true;
-        show_percentage = true;
-        message_suppress = true;
-        current_title = "Resetting System...";
-        current_subtitle = "Do not turn off your computer";
-    }
-}
-Plymouth.SetUpdateStatusFunction(UpdateStatusCallback);
-
-//-------------------------- System progress functies -----------------------
-fun SystemUpdateProgressCallback(progress_amount) {
-    progress = progress_amount;
-}
-Plymouth.SetSystemUpdateProgressFunction(SystemUpdateProgressCallback);
-
-//-------------------------- Boot progress functies -----------------------
-fun BootProgressCallback(progress_amount) {
-    progress = progress_amount;
-}
-Plymouth.SetBootProgressFunction(BootProgressCallback);
-
-//-------------------------- Root mounted functie -----------------------
-fun RootMountedCallback() {
-    status = "normal";
-}
-Plymouth.SetRootMountedFunction(RootMountedCallback);
-
-//-------------------------- Quit functie -----------------------
-fun QuitCallback() {
-    title_sprite = null;
-    subtitle_sprite = null;
-    percentage_sprite = null;
-    progress_bar_sprite = null;
-    flyingman_sprite = null;
-}
-Plymouth.SetQuitFunction(QuitCallback);

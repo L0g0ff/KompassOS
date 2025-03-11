@@ -12,7 +12,4 @@ set -x
 # Set the theme (tech_b, in this case)
 # Rebuilt the initrd (see recipe)
 #
-# UnModified
-# plymouth-set-default-theme -R target_2
-# Modified
-# plymouth-set-default-theme -R tech_b
+plymouth-set-default-theme tech_b
