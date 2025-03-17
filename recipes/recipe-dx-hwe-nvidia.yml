@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: KompassOS-dx-hwe-nvidia
+name: kompassos-dx-hwe-nvidia
 # description will be included in the image's metadata
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 
