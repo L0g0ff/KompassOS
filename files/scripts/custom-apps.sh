@@ -41,6 +41,12 @@ rpm-ostree install keeperpasswordmanager
 echo 'net.ipv4.ip_unprivileged_port_start=0' > /etc/sysctl.d/50-unprivileged-ports.conf
 
 #
+# Fix SDDM Numlock
+#
+sed -i '/InputMethod=/a Numlock=on' /usr/lib/sddm/sddm.conf.d/plasma-wayland.conf
+
+
+#
 # Fix blurry wayland electron apps
 #
 echo 'ELECTRON_OZONE_PLATFORM_HINT=auto' >> /etc/environment
