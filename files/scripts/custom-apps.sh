@@ -13,11 +13,11 @@ set -x
 rpm-ostree install nmap telnet screen libvirt-devel tilix plymouth-plugin-script
 
 #
-# Switch from fedora flatpak to flathub
+# Switch from fedora flatpak to flathub - need some extra love. Build is failing on this part
 #
-flatpak remote-delete --system fedora-testing
-flatpak remote-delete --system fedora
-flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+# flatpak remote-delete --system fedora-testing
+# flatpak remote-delete --system fedora
+# flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 
 #
