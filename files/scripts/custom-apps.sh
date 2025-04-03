@@ -10,7 +10,7 @@ set -x
 #
 # Some basic tools, plymouth-plugin-script for bootloader and libvirt-devel for vagrant
 #
-rpm-ostree install nmap telnet screen libvirt-devel tilix plymouth-plugin-script
+rpm-ostree install nmap net-snmp telnet screen libvirt-devel tilix plymouth-plugin-script1
 
 #
 # Switch from fedora flatpak to flathub - need some extra love. Build is failing on this part
