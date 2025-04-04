@@ -67,7 +67,4 @@ rm /etc/yum.repos.d/keeper.repo -f
 #
 # Better Flatpak support (PoC)
 #
-systemctl enable flatpak-add-aurora-repos.service
-if systemctl list-unit-files | grep -q "flatpak-add-fedora-repos.service"; then
-    systemctl disable flatpak-add-fedora-repos.service
-fi
+systemctl enable flatpak-add-fedora-repos.service
