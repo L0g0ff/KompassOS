@@ -63,3 +63,9 @@ echo 'ELECTRON_OZONE_PLATFORM_HINT=auto' >> /etc/environment
 # Clean up the yum repo (updates are baked into new images)
 #
 rm /etc/yum.repos.d/keeper.repo -f
+
+#
+# Better Flatpak support (PoC)
+#
+systemctl enable flatpak-add-aurora-repos.service
+systemctl list-unit-files | grep -q "flatpak-add-fedora-repos.service" && systemctl disable flatpak-add-fedora-repos.service
