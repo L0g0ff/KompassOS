@@ -68,3 +68,8 @@ rm /etc/yum.repos.d/keeper.repo -f
 # Better Flatpak support (PoC)
 #
 systemctl enable flatpak-add-fedora-repos.service
+
+#
+# Enable custom Ydotool service
+#
+systemctl enable ydotool.service
