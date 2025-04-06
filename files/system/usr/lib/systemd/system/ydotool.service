@@ -1,5 +1,6 @@
 [Unit]
 Description=Starts ydotoold service
+After=graphical.target
 
 [Service]
 Type=simple
@@ -10,4 +11,4 @@ KillMode=process
 TimeoutSec=180
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical.target
