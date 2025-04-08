@@ -63,7 +63,7 @@ You can download the ISO from [www.kompassos.nl](https://www.kompassos.nl). The 
 3. **Boot from USB**: Restart your computer and boot from the USB drive. You may need to adjust your BIOS/UEFI settings to enable USB booting.
 4. **Explore KompassOS**: Once booted, you can explore KompassOS in a live environment or proceed with installation if desired.
 
-For detailed instructions on creating a bootable USB or troubleshooting boot issues, refer to the [official documentation](https://www.kompassos.nl/docs).
+For detailed instructions on creating a bootable USB or troubleshooting boot issues, refer to the [official documentation](https://docs.getaurora.dev/guides/install-guide).
 
 ## Verification
 
