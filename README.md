@@ -2,7 +2,7 @@
 
 ## About
 
-KompassOS is a developer-friendly operating system based on Fedora Silverblue Aurora, designed specifically for DevOps engineers, system administrators, and network engineers. It offers a KDE-exclusive environment with pre-installed tools and applications, ensuring a ready-to-use workstation with minimal configuration. With features like automatic updates, enhanced security, and support for virtualization, KompassOS provides a robust and efficient platform for professionals.
+KompassOS is a developer-friendly operating system based on Fedora Silverblue Aurora, designed specifically for DevOps engineers, system administrators, and network engineers. It offers a KDE-exclusive environment with pre-installed tools and applications, ensuring a ready-to-use workstation with minimal configuration. With features like automatic updates, enhanced security, and support for virtualization, KompassOS provides a robust and efficient platform for professionals. For more information, visit [www.kompassos.nl](https://www.kompassos.nl).
 
 ## Vision for the Future
 
