@@ -6,7 +6,7 @@ KompassOS is a developer-friendly operating system based on Fedora Silverblue [A
 
 ## Vision for the Future
 
-We believe that immutable, cloud-native, layered images represent the future of operating systems. This approach offers several key advantages:
+We believe that immutable, open-source, cloud-native, layered images represent the future of operating systems. This approach offers several key advantages:
 
 1. **Enhanced Security**: Immutable images ensure that the base system cannot be tampered with, reducing the attack surface and making it easier to detect unauthorized changes.
 
