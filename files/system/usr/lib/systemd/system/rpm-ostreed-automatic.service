@@ -5,4 +5,6 @@ ConditionPathExists=/run/ostree-booted
 
 [Service]
 Type=simple
+ExecStartPre=/usr/bin/notify-send "Updating System" "KompassOS is updating your system, please hold on." --app-name="rpm-ostree Automatic Update" -u NORMAL
 ExecStart=rpm-ostree upgrade --quiet --trigger-automatic-update-policy
+ExecStartPost=/usr/bin/notify-send "Updating System" "KompassOS updates are finished, please reboot for the latest and greatest!" --app-name="rpm-ostree Automatic Update" -u NORMAL
