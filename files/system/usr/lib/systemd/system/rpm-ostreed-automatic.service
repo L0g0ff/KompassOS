@@ -1,15 +1,8 @@
 [Unit]
-Description=Add Official flatpak flathub repository
-ConditionPathExists=!/var/lib/flatpak/.fedora-initialized
-Before=flatpak-system-helper.service
-Wants=network-online.target
-After=network-online.target
- 
+Description=rpm-ostree Automatic Update
+Documentation=man:rpm-ostree(1) man:rpm-ostreed.conf(5)
+ConditionPathExists=/run/ostree-booted
+
 [Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/bin/flatpak remote-add --system --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-ExecStartPost=/usr/bin/touch /var/lib/flatpak/.fedora-initialized
- 
-[Install]
-WantedBy=multi-user.target
+Type=simple
+ExecStart=rpm-ostree upgrade --quiet --trigger-automatic-update-policy
