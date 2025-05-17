@@ -35,6 +35,7 @@ modules:
       - custom-apps.sh
       - google-chrome.sh
       - plymouth.sh
+      - citrix.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
@@ -42,7 +43,6 @@ modules:
     repos:
       - https://repo1.famvoll.nl/rpm/kompass.repo
     install:
-      - ICAClient
       - zoom
       - rambox
     optfix:
