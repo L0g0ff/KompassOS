@@ -40,7 +40,10 @@ modules:
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
   - type: rpm-ostree
+    repos:
+      - https://repo1.famvoll.nl/rpm/kompass.repo
     install:
+      - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
       - https://github.com/ramboxapp/download/releases/download/v2.4.1/Rambox-2.4.1-linux-x64.rpm
     optfix:
