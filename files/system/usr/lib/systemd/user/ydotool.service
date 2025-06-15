@@ -11,4 +11,4 @@ KillMode=process
 TimeoutSec=180
 
 [Install]
-WantedBy=graphical.target
+WantedBy=default.target

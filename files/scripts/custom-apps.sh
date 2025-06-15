@@ -74,3 +74,11 @@ systemctl enable flatpak-add-fedora-repos.service
 #
 # systemctl enable ydotool.service
 systemctl --user enable ydotool.service --global
+
+# 
+# Disable tailscale
+systemctl disable tailscaled
+
+#
+# Install flatpack remmina
+flatpak install --system flathub org.remmina.Remmina
