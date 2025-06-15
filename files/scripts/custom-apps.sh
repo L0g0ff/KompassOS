@@ -72,4 +72,5 @@ systemctl enable flatpak-add-fedora-repos.service
 #
 # Enable custom Ydotool service
 #
-systemctl enable ydotool.service
+# systemctl enable ydotool.service
+systemctl --user enable ydotool.service --global
