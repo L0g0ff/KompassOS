@@ -81,4 +81,6 @@ systemctl disable tailscaled
 
 #
 # Install flatpack remmina
-flatpak install --system flathub org.remmina.Remmina
+# flathub source not active here yet..
+# 38.44 error: No remote refs found for ?flathub?
+#flatpak install --system flathub org.remmina.Remmina
