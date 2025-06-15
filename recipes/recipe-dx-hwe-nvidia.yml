@@ -41,7 +41,7 @@ modules:
       - disable_service_tailscale.sh
       - enable_flatpak_repo.sh
       - enable_user_ydotool.sh
-      - #install_citrix.sh # still broken
+      - #install_citrix.sh
       - install_google_chrome.sh
       - install_keeper.sh
       - install_system_tools.sh
