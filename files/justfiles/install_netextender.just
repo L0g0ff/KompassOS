@@ -158,7 +158,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
         echo ''
         echo '    sudo echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/ip_forward.conf'
         echo '    echo "add the following to the host system: ip route add 10.5.50.0/24 via 192.168.121.10"'
-        echo "    echo \"to connect use: nxcli connect""
+        echo "    echo \"to connect use: nxcli connect\""
         echo '    reboot'
         echo '  SHELL'
         echo 'end'
