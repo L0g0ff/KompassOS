@@ -169,6 +169,9 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
     echo "To start the VM, run: cd ${TARGET_DIR} && vagrant up"
     if [ -n "$SSH_PUBLIC_KEY" ]; then
         echo "After the VM is running, you can connect directly with: ssh $CURRENT_USER@192.168.121.10"
+        echo "After the you are ssh connected with the VM, you can you the command 'nxcli connect' to start the VPN connection"
+        echo "Then can use the VM '192.168.121.10:22' as jumphost from you local machine to access the resources behind the VPN"
+        echo "Happy connecting!"
     else
         echo "${yellow}No SSH key was found. You'll need to use 'vagrant ssh' to connect to the VM${normal}"
     fi
