@@ -7,7 +7,7 @@ install-cups-canon:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
     echo "${green}Installing CUPS with Canon drivers in Distrobox...${normal}"
-    distrobox-assemble create --file files/distrobox/cups-canon/cups-distrobox.ini --replace && echo "${green}CUPS with Canon drivers installed successfully!${normal}" && echo "CUPS web interface available at: http://localhost:6631" && echo "To enter the container: distrobox enter cups-canon"
+    distrobox-assemble create --file /usr/share/kompassos/distrobox/cups-canon/cups-distrobox.ini --replace && echo "${green}CUPS with Canon drivers installed successfully!${normal}" && echo "CUPS web interface available at: http://localhost:6631" && echo "To enter the container: distrobox enter cups-canon"
 
 # Remove CUPS Canon distrobox
 [group('Apps')]
