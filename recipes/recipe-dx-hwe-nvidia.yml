@@ -6,7 +6,7 @@ name: kompassos-dx-hwe-nvidia
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
+base-image: ghcr.io/ublue-os/aurora-dx-hwe-nvidia-open
 image-version: 42 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
