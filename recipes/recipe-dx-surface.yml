@@ -1,19 +1,19 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: kompassos-dx-hwe-nvidia
+name: kompassos-dx-surface
 # description will be included in the image's metadata
-description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
+description: Aurora Developer Experience for Microsft Surface devices with some extra gravy.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx-hwe-nvidia-open
+base-image: ghcr.io/ublue-os/aurora-dx
 image-version: 42 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
-# bluebuild validate --all-errors ./recipes/recipe-dx-hwe-nvidia.yml
+# bluebuild validate --all-errors ./recipes/recipe-dx-surface.yml
 
 # Local build test
-# bluebuild build ./recipes/recipe-dx-hwe-nvidia.yml 
+# bluebuild build ./recipes/recipe-dx-surface.yml 
 
 
 # module configuration, executed in order
@@ -24,7 +24,7 @@ modules:
     files:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-
+  
   - type: justfiles
     validate: false
     include:
@@ -36,10 +36,12 @@ modules:
     - install_vagrant.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
-
+ 
   - type: script
     scripts:
-      # - install_hwe-additions.sh - only for vanilla hwe
+      #- install_hwe-additions.sh
+      #- install_bazzite-kernel.sh
+      - install_surface-kernel.sh
       - disable_service_tailscale.sh
       - enable_flatpak_repo.sh
       - enable_user_ydotool.sh
@@ -52,7 +54,6 @@ modules:
       - set_sddm_start_numlock.sh
       - set_ssh_unprivileged_ports.sh
       - z_cleanup.sh
-
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
@@ -67,5 +68,5 @@ modules:
       - Citrix
       - zoom
       - Rambox
-    
+
   - type: initramfs #needed for plymouth
