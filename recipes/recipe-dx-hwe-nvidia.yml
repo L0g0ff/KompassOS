@@ -58,7 +58,7 @@ modules:
 
   - type: rpm-ostree
     repos:
-      - https://repo1.famvoll.nl/rpm/kompass.repo
+      - https://repo.kompassos.nl/rpm/kompass.repo
     install:
       - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
