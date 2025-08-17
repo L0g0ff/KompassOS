@@ -24,7 +24,7 @@ ProgressBarVerticalAlignment=.6
 ProgressBarWidth=350
 ProgressBarHeight=5
 ProgressBarBackgroundColor=0x333333
-ProgressBarForegroundColor=0xd70751
+ProgressBarForegroundColor=0x5075bd
 DialogClearsFirmwareBackground=true
 MessageBelowAnimation=true
 
