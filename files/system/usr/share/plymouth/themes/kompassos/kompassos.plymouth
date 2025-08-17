@@ -1,0 +1,71 @@
+[Plymouth Theme]
+Name=kompassos
+Description=Kompassos theme with logo and progressbar
+ModuleName=two-step
+
+[two-step]
+Font=Cantarell 12
+TitleFont=Cantarell 20
+ImageDir=/usr/share/plymouth/themes/kompassos
+DialogHorizontalAlignment=.5
+DialogVerticalAlignment=.5
+TitleHorizontalAlignment=.5
+TitleVerticalAlignment=.5
+HorizontalAlignment=.5
+VerticalAlignment=.4
+WatermarkHorizontalAlignment=.5
+WatermarkVerticalAlignment=.98
+Transition=fade
+TransitionDuration=0.5
+BackgroundStartColor=0x000000
+BackgroundEndColor=0x000000
+ProgressBarHorizontalAlignment=.5
+ProgressBarVerticalAlignment=.6
+ProgressBarWidth=350
+ProgressBarHeight=5
+ProgressBarBackgroundColor=0x333333
+ProgressBarForegroundColor=0xd70751
+DialogClearsFirmwareBackground=true
+MessageBelowAnimation=true
+
+[boot-up]
+UseEndAnimation=true
+UseFirmwareBackground=false
+ProgressBarShowPercentComplete=false
+UseProgressBar=true
+Title=Starting
+
+[shutdown]
+UseEndAnimation=true
+UseFirmwareBackground=false
+ProgressBarShowPercentComplete=false
+UseProgressBar=false
+Title=Shutting down
+
+[reboot]
+UseEndAnimation=true
+UseFirmwareBackground=false
+ProgressBarShowPercentComplete=false
+UseProgressBar=false
+Title=Restarting
+
+[updates]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Installing updates
+
+[system-upgrade]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Installing upgrades
+
+[firmware-upgrade]
+UseFirmwareBackground=false
+SuppressMessages=true
+ProgressBarShowPercentComplete=true
+UseProgressBar=true
+Title=Installing firmware
