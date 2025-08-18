@@ -67,5 +67,40 @@ modules:
       - Citrix
       - zoom
       - Rambox
+  
+  - type: default-flatpaks
+    configurations:
+      - notify: true
+        scope: system
+        repo:
+          url: https://flathub.org/repo/flathub.flatpakrepo
+          title: Flathub (system)
+        install:
+          - org.mozilla.Thunderbird
+          - org.mozilla.firefox
+          - org.kde.kcalc
+          - org.kde.gwenview
+          - org.kde.kontact
+          - org.kde.okular
+          - org.kde.kweather
+          - org.kde.kclock
+          - org.fkoehler.KTailctl
+          - org.kde.haruna
+          - com.github.tchx84.Flatseal
+          - com.ranfdev.DistroShelf
+          - io.github.flattool.Warehouse
+          - org.fedoraproject.MediaWriter
+          - io.missioncenter.MissionCenter
+          - org.gnome.DejaDup
+          - com.borgbase.Vorta
+          - io.github.input_leap.input-leap
+          - org.gtk.Gtk3theme.Breeze
+          - io.github.pwr_solaar.solaar
+          - org.gustavoperedo.FontDownloader
+          - org.kde.skanpage
+          - io.podman_desktop.PodmanDesktop
+          - io.github.getnf.embellish
+          - me.iepure.devtoolbox
+          - sh.loft.devpod
     
   - type: initramfs #needed for plymouth
