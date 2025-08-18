@@ -40,6 +40,6 @@ generate-iso-kompassos-dx-surface:
         --iso-name kompassos-dx-surface.iso \
         --variant kinoite \
         --secure-boot-url https://raw.githubusercontent.com/linux-surface/linux-surface/master/pkg/keys/surface.cer \
-        --enrollment-password surface \
+        --enrollment-password universalblue \
         image ghcr.io/l0g0ff/kompassos-dx-surface:latest
     echo "ISO generated successfully in ~/iso/"
