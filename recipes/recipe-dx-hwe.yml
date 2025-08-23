@@ -39,7 +39,7 @@ modules:
 
   - type: script
     scripts:
-      - install_hwe-additions.sh
+      # - install_hwe-additions.sh -> only needed when when hwe is dropped by universalblue in future
       - disable_service_tailscale.sh
       - enable_flatpak_repo.sh
       - enable_user_ydotool.sh
