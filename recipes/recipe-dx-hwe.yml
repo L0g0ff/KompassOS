@@ -61,7 +61,7 @@ modules:
     install:
       - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
-      - https://github.com/ramboxapp/download/releases/download/v2.5.0/Rambox-2.5.0-linux-x64.rpm
+      - https://github.com/ramboxapp/download/releases/download/v2.5.1/Rambox-2.5.1-linux-x64.rpm
     optfix:
       - Citrix
       - zoom
