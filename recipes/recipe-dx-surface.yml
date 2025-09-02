@@ -34,6 +34,7 @@ modules:
     - install_cups_canon.just
     - install_netextender.just
     - install_vagrant.just
+    - install_winboat.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
  
