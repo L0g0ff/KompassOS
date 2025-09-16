@@ -12,7 +12,10 @@ image-version: 42 # latest is also supported if you want new updates ASAP
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-hwe.yml
 
-# Local build test
+## Local build test
+# Download base image first to speed up local build:
+# docker pull ghcr.io/ublue-os/aurora-dx-hwe:42
+# then build locally with:
 # bluebuild build ./recipes/recipe-dx-hwe.yml 
 
 
