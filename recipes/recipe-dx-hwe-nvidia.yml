@@ -68,6 +68,12 @@ modules:
       - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
       - https://github.com/ramboxapp/download/releases/download/v2.5.1/Rambox-2.5.1-linux-x64.rpm
+      # Hyperland and related tools (choose in SDDM)
+      - hyprland
+      - waybar
+      - wofi
+      - xdg-desktop-portal-hyprland
+      - kitty
     optfix:
       - Citrix
       - zoom
