@@ -71,6 +71,7 @@ modules:
       - hyprland
       - waybar
       - wofi
+      - pavucontrol-qt
       - xdg-desktop-portal-hyprland
       - kitty
     optfix:
