@@ -10,3 +10,9 @@ set -x
 # Clean up the yum repo (updates are baked into new images)
 #
 rm /etc/yum.repos.d/keeper.repo -f
+
+#
+# Overwrite Aurora branding for KompassOS backgrounds
+#
+ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default.png
+ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default-dark.png
