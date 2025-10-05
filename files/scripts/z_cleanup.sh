@@ -16,3 +16,4 @@ rm /etc/yum.repos.d/keeper.repo -f
 #
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default.png
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default-dark.png
+ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1 /usr/share/backgrounds/aurora/aurora-wallpaper-1
