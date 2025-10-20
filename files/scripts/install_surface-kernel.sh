@@ -13,7 +13,7 @@ dnf5 config-manager \
 dnf5 -y install --allowerasing kernel-surface iptsd libwacom-surface kernel-surface-devel surface-secureboot surface-control kernel-surface-core
 
 # Remove the default Fedora kernel and related packages, but EXCLUDE all Surface kernel packages
-dnf5 -y remove --exclude=kernel-surface* kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+dnf5 -y remove --exclude=kernel-surface* --exclude=fakeroot* kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
 # Prevent kernel stuff from upgrading again
 dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
