@@ -64,7 +64,7 @@ modules:
   - type: rpm-ostree
     repos:
       - https://repo.kompassos.nl/rpm/kompass.repo
-      - https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-$(rpm -E %fedora)/scottames-ghostty-fedora-$(rpm -E %fedora).repo # ghostty repo
+      - https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-%OS_VERSION%/scottames-ghostty-fedora-%OS_VERSION%.repo # ghostty repo
     install:
       - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
