@@ -6,8 +6,11 @@ name: kompassos-dx-hwe-nvidia
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
-image-version: 43 # latest is also supported if you want new updates ASAP
+# Revert to 42 because of Citrix issues in 43 (nothing provides webkit2gtk3 >= 2.26 needed by ICAClient-25.08.0.88-0.x86_64 from @commandline)
+# base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
+# image-version: 43 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/aurora-dx-hwe-nvidia-open
+image-version: 42 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-hwe-nvidia.yml
