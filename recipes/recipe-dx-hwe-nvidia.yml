@@ -9,8 +9,8 @@ description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 # Revert to 42 because of Citrix issues in 43 (nothing provides webkit2gtk3 >= 2.26 needed by ICAClient-25.08.0.88-0.x86_64 from @commandline)
 # base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
 # image-version: 43 # latest is also supported if you want new updates ASAP
-base-image: ghcr.io/ublue-os/aurora-dx-hwe-nvidia-open
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
+image-version: 43 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-hwe-nvidia.yml
@@ -68,6 +68,7 @@ modules:
     repos:
       - https://repo.kompassos.nl/rpm/kompass.repo
       - https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-%OS_VERSION%/scottames-ghostty-fedora-%OS_VERSION%.repo # ghostty repo
+      - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo
     install:
       - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
