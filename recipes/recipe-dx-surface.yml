@@ -41,14 +41,19 @@ modules:
     - install_winboat.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
- 
+
+  - type: dnf
+    repos:
+      files:
+        - linux-surface.repo
+
   - type: script
     scripts:
       #- install_hwe-additions.sh
       #- install_bazzite-kernel.sh
       - install_surface-kernel.sh
       - disable_service_tailscale.sh
-      - enable_flatpak_repo.sh
+      # - enable_flatpak_repo.sh - only need for fresh ISO images. Need to check if already in base
       - enable_user_ydotool.sh
       # - install_citrix.sh - need to fix
       # - install_google_chrome.sh - moved to rpm-ostree

@@ -49,7 +49,7 @@ modules:
     scripts:
       # - install_hwe-additions.sh - only for vanilla hwe
       - disable_service_tailscale.sh
-      - enable_flatpak_repo.sh
+      # - enable_flatpak_repo.sh - only need for fresh ISO images. Need to check if already in base
       - enable_user_ydotool.sh
       # - install_citrix.sh - need to fix
       # - install_google_chrome.sh - moved to rpm-ostree

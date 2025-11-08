@@ -6,8 +6,10 @@ set -ouex pipefail
 dnf5 versionlock delete kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
 
 # Add the Surface Linux repo
-dnf5 config-manager \
-    addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
+# see recipe /files/dnf/surface-linux.repo
+# hardcoded the repo for F43 compatibility
+## dnf5 config-manager \
+##     addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
 
 # Install the Surface Linux kernel and related packages
 dnf5 -y install --allowerasing kernel-surface iptsd libwacom-surface kernel-surface-devel surface-secureboot surface-control kernel-surface-core
