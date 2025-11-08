@@ -6,15 +6,15 @@ name: kompassos-dx-hwe
 description: Aurora Developer Experience Hardware Enablement with some extra gravy.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/aurora-dx-hwe
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/aurora-dx
+image-version: 43 # latest is also supported if you want new updates ASAP
 
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-hwe.yml
 
 ## Local build test
 # Download base image first to speed up local build:
-# docker pull ghcr.io/ublue-os/aurora-dx-hwe:42
+# docker pull ghcr.io/ublue-os/aurora-dx:43
 # then build locally with:
 # bluebuild build ./recipes/recipe-dx-hwe.yml 
 
@@ -64,6 +64,7 @@ modules:
     repos:
       - https://repo.kompassos.nl/rpm/kompass.repo
       - https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-%OS_VERSION%/scottames-ghostty-fedora-%OS_VERSION%.repo # ghostty repo
+      - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
     install:
       - ICAClient
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
