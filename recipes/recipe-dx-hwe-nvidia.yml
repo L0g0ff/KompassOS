@@ -67,14 +67,14 @@ modules:
   - type: rpm-ostree
     repos:
       - https://repo.kompassos.nl/rpm/kompass.repo
-      - https://copr.fedorainfracloud.org/coprs/scottames/ghostty/repo/fedora-%OS_VERSION%/scottames-ghostty-fedora-%OS_VERSION%.repo # ghostty repo
+      - https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-%OS_VERSION%/wezfurlong-wezterm-nightly-fedora-%OS_VERSION%.repo # wezterm repo
       - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
     install:
       - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
       - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
       - https://github.com/ramboxapp/download/releases/download/v2.5.1/Rambox-2.5.1-linux-x64.rpm
       - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-      - ghostty
+      - wezterm
     optfix:
       - Citrix
       - zoom
