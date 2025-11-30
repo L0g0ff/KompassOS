@@ -22,11 +22,6 @@ install-winboat:
         curl -L -o "$INSTALL_DIR/winboat.AppImage" "$LATEST_URL"
         chmod +x "$INSTALL_DIR/winboat.AppImage"
         
-        # Download official icon
-        echo "${blue}Downloading WinBoat icon...${normal}"
-        mkdir -p "$HOME/.local/share/icons"
-        curl -L -o "$HOME/.local/share/icons/winboat.png" "https://raw.githubusercontent.com/TibixDev/winboat/main/icons/icon.png"
-        
         # Create desktop entry
         mkdir -p "$HOME/.local/share/applications"
         DESKTOP_PATH="$HOME/.local/share/applications/winboat.desktop"
@@ -34,7 +29,7 @@ install-winboat:
         echo "Name=WinBoat" >> "$DESKTOP_PATH" 
         echo "Comment=Run Windows applications on Linux" >> "$DESKTOP_PATH"
         echo "Exec=$HOME/.local/bin/winboat.AppImage" >> "$DESKTOP_PATH"
-        echo "Icon=$HOME/.local/share/icons/winboat.png" >> "$DESKTOP_PATH"
+        echo "Icon=/usr/share/icons/winboat/winboat.png" >> "$DESKTOP_PATH"
         echo "Terminal=false" >> "$DESKTOP_PATH"
         echo "Type=Application" >> "$DESKTOP_PATH"
         echo "Categories=System" >> "$DESKTOP_PATH"
@@ -57,7 +52,6 @@ remove-winboat:
     if $(ugum confirm "Remove WinBoat application?"); then
         rm -f "$HOME/.local/bin/winboat.AppImage"
         rm -f "$HOME/.local/share/applications/winboat.desktop"
-        rm -f "$HOME/.local/share/icons/winboat.png"
         echo "${green}WinBoat application removed${normal}"
         echo ""
         echo "${blue}Your Windows VMs remain untouched and can be managed via:${normal}"
