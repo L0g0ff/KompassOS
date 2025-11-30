@@ -5,8 +5,7 @@ set -euo pipefail
 # if shit breaks i at least know where it is
 set -x
 
-
-#
-# Better Flatpak support (PoC)
-#
-systemctl enable flatpak-add-fedora-repos.service
+# 
+# install WSMan for PSRemoting
+pwsh -Command 'Install-Module -Name PSWSMan' -Force
+sudo pwsh -Command 'Install-WSMan'

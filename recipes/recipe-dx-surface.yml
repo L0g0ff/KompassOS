@@ -49,14 +49,10 @@ modules:
 
   - type: script
     scripts:
-      #- install_hwe-additions.sh
-      #- install_bazzite-kernel.sh
       - install_surface-kernel.sh
       - disable_service_tailscale.sh
-      # - enable_flatpak_repo.sh - only need for fresh ISO images. Need to check if already in base
       - enable_user_ydotool.sh
       # - install_citrix.sh - need to fix
-      # - install_google_chrome.sh - moved to rpm-ostree
       - install_keeper.sh
       - install_system_tools.sh
       - reconfigure_plymouth.sh
@@ -84,6 +80,10 @@ modules:
       - zoom
       - Rambox
       - google
+
+  - type: script
+    scripts:
+      - install_pwsh_wsman.sh
 
   - type: default-flatpaks
     configurations:
