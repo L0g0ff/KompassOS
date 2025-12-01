@@ -73,6 +73,7 @@ modules:
       - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
       - wezterm
       - https://github.com/PowerShell/PowerShell/releases/download/v7.4.13/powershell-lts-7.4.13-1.rh.x86_64.rpm
+      - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
     optfix:
       - Citrix
       - zoom
