@@ -1,0 +1,12 @@
+[Desktop Entry]
+Exec=sh -c 'sleep 2s; ydotool key 42:0 54:0 29:0 97:0; NO_SHIFT_CHARS="abcdefghijklmnopqrstuvwxyz0123456789,./;[]\\\\=-\`'"'"'"; SHIFT_CHARS="ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%%^&*()_+{}|:\\"~<>?"; wl-paste | grep -o . | while IFS= read -r char; do case "$char" in ["$SHIFT_CHARS"]) ydotool key 42:1; sleep 0.1; ydotool type "$char"; sleep 0.1; ydotool key 42:0; sleep 0.1 ;; ["$NO_SHIFT_CHARS"]) ydotool type "$char"; sleep 0.1 ;; esac; done'
+Name=Autotype-Clipboard
+Comment=Autotype clipboard
+Icon=input-keyboard
+NoDisplay=false
+Categories=System;
+StartupNotify=false
+Terminal=false
+Type=Application
+X-KDE-GlobalAccel-CommandShortcut=true
+X-KDE-Shortcuts=Alt+`
