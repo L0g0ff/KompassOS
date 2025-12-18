@@ -12,7 +12,7 @@ install-claude-code:
     echo "- Requires authentication with Claude account"
     echo ""
     
-    if $(ugum confirm "Install Claude Code?"); then
+    if $(gum confirm "Install Claude Code?"); then
         echo "${blue}Installing Claude Code...${normal}"
         curl -fsSL https://claude.ai/install.sh | bash -s latest
         echo "${green}Claude Code installed successfully!${normal}"

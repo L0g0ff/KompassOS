@@ -11,7 +11,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
     if ! command -v vagrant &> /dev/null; then
         echo "${red}${bold}Warning: Vagrant is not installed!${normal}"
         echo "Would you like to install Vagrant now?"
-        if $(ugum confirm "Install Vagrant?"); then
+        if $(gum confirm "Install Vagrant?"); then
             echo "Installing Vagrant..."
             just install-vagrant
         else
@@ -24,7 +24,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
     if ! vagrant plugin list | grep -q vagrant-libvirt; then
         echo "${red}${bold}Warning: vagrant-libvirt plugin is not installed!${normal}"
         echo "Would you like to install the vagrant-libvirt plugin now?"
-        if $(ugum confirm "Install vagrant-libvirt plugin?"); then
+        if $(gum confirm "Install vagrant-libvirt plugin?"); then
             vagrant plugin install vagrant-libvirt
         else
             echo "${yellow}Please install the vagrant-libvirt plugin first using: vagrant plugin install vagrant-libvirt${normal}"
@@ -39,7 +39,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
     if [ ! -f "$HOME/.ssh/id_rsa.pub" ]; then
         echo "${yellow}${bold}No SSH key found at $HOME/.ssh/id_rsa.pub${normal}"
         echo "Would you like to generate one?"
-        if $(ugum confirm "Generate SSH key?"); then
+        if $(gum confirm "Generate SSH key?"); then
             ssh-keygen -t rsa -b 4096
         fi
     fi
@@ -55,7 +55,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
         echo "2. Current directory ($(pwd))"
         echo "3. Custom location"
         
-        LOCATION_CHOICE=$(ugum choose "Default directory" "Current directory" "Custom location")
+        LOCATION_CHOICE=$(gum choose "Default directory" "Current directory" "Custom location")
         
         case "$LOCATION_CHOICE" in
             "Default directory")
@@ -65,7 +65,7 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
                 TARGET_DIR=$(pwd)
                 ;;
             "Custom location")
-                TARGET_DIR=$(ugum input --placeholder="Enter full path for configuration")
+                TARGET_DIR=$(gum input --placeholder="Enter full path for configuration")
                 ;;
         esac
     else
@@ -83,10 +83,10 @@ setup-netextender-vagrant vpn_server="" vpn_port="" vpn_domain="" vpn_user="" ta
         echo "${bold}NetExtender Vagrant Configuration${normal}"
         echo "Please provide the following details:"
         
-        VPN_SERVER=$(ugum input --placeholder="VPN Server (e.g. vpn.example.org)" --value="{{ vpn_server }}")
-        VPN_PORT=$(ugum input --placeholder="VPN Port (e.g. 4433)" --value="{{ vpn_port }}")
-        VPN_DOMAIN=$(ugum input --placeholder="VPN Domain" --value="{{ vpn_domain }}")
-        VPN_USER=$(ugum input --placeholder="VPN Username" --value="{{ vpn_user }}")
+        VPN_SERVER=$(gum input --placeholder="VPN Server (e.g. vpn.example.org)" --value="{{ vpn_server }}")
+        VPN_PORT=$(gum input --placeholder="VPN Port (e.g. 4433)" --value="{{ vpn_port }}")
+        VPN_DOMAIN=$(gum input --placeholder="VPN Domain" --value="{{ vpn_domain }}")
+        VPN_USER=$(gum input --placeholder="VPN Username" --value="{{ vpn_user }}")
     else
         VPN_SERVER="{{ vpn_server }}"
         VPN_PORT="{{ vpn_port }}"

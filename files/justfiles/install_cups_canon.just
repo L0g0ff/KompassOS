@@ -16,7 +16,7 @@ remove-cups-canon:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
     
-    if $(ugum confirm "Remove CUPS Canon distrobox?"); then
+    if $(gum confirm "Remove CUPS Canon distrobox?"); then
         echo "Stopping and removing distrobox..."
         distrobox stop cups-canon || true
         distrobox rm cups-canon || true

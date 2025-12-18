@@ -15,7 +15,7 @@ remove-claude-desktop:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
     
-    if $(ugum confirm "Remove Claude Desktop distrobox?"); then
+    if $(gum confirm "Remove Claude Desktop distrobox?"); then
         distrobox assemble rm --file /usr/share/kompassos/distrobox/claude-desktop/claude-distrobox.ini
         echo "${green}Claude Desktop distrobox removed successfully!${normal}"
     fi

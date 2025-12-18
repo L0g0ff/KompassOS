@@ -12,7 +12,7 @@ install-winboat:
     echo "- The 'Windows Desktop App' is stable and recommended"
     echo ""
     
-    if $(ugum confirm "Continue with WinBoat installation?"); then
+    if $(gum confirm "Continue with WinBoat installation?"); then
         INSTALL_DIR="$HOME/.local/bin"
         mkdir -p "$INSTALL_DIR"
         
@@ -49,7 +49,7 @@ remove-winboat:
     echo "- To remove VMs, use Virtual Machine Manager or WinBoat itself"
     echo ""
     
-    if $(ugum confirm "Remove WinBoat application?"); then
+    if $(gum confirm "Remove WinBoat application?"); then
         rm -f "$HOME/.local/bin/winboat.AppImage"
         rm -f "$HOME/.local/share/applications/winboat.desktop"
         echo "${green}WinBoat application removed${normal}"

@@ -7,7 +7,7 @@ remove-bridge:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
     
-    if $(ugum confirm "Remove br0 bridge and restore normal networking?"); then
+    if $(gum confirm "Remove br0 bridge and restore normal networking?"); then
         echo "Removing bridge..."
         
         # Remove bridge connections

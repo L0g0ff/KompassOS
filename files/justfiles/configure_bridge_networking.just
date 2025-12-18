@@ -23,7 +23,7 @@ setup-bridge:
         exit 1
     fi
     
-    # Build interface choices for ugum choose
+    # Build interface choices for gum choose
     CHOICES=()
     CHOSEN_DEVICE=""
     DEVICE_TYPE=""
@@ -50,7 +50,7 @@ setup-bridge:
     else
         # Multiple interfaces - let user choose with pijltjes
         echo "${bold}Select interface for bridging:${normal}"
-        CHOICE=$(ugum choose "${CHOICES[@]}")
+        CHOICE=$(gum choose "${CHOICES[@]}")
         
         # Extract device name and type from choice
         CHOSEN_DEVICE=$(echo "$CHOICE" | cut -d' ' -f1)
@@ -70,7 +70,7 @@ setup-bridge:
         echo "${yellow}• Some access points block bridged traffic entirely${normal}"
         echo "${yellow}• Consider using NAT networking (virbr0) for WiFi setups${normal}"
         echo ""
-        if ! $(ugum confirm "Continue with WiFi bridging anyway?"); then
+        if ! $(gum confirm "Continue with WiFi bridging anyway?"); then
             echo "Bridge setup cancelled"
             exit 0
         fi
