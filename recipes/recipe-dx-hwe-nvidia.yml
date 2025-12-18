@@ -38,6 +38,7 @@ modules:
     - generate_iso.just
     - install_claude_distrobox.just
     - install_claude_code.just
+    - install_copilot_cli.just
     - install_cups_canon.just
     - install_netextender.just
     - install_vagrant.just
