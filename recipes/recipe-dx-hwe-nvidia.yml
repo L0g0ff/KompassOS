@@ -73,10 +73,17 @@ modules:
       - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
       - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
       # Wezterm COPR is Broken ATM so using direct download below. See: https://github.com/wezterm/wezterm/issues/7480
-      #- wezterm 
+      #- wezterm
       - https://isos.kompassos.nl/rpms/wezterm-20260110_150208-1.g6e02c91e6.fc43.x86_64.rpm
       - https://github.com/PowerShell/PowerShell/releases/download/v7.4.13/powershell-lts-7.4.13-1.rh.x86_64.rpm
       - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
+      # Intel IPU6 Camera support (for built-in laptop webcam)
+      # Dependencies: v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
+      # Already in base: v4l2loopback, intel-ipu6 kernel modules, intel-vsc-firmware
+      - https://download1.rpmfusion.org/free/fedora/releases/43/Everything/x86_64/os/Packages/v/v4l2-relayd-0.1.2-15.20220126git2e4d5c9.fc43.x86_64.rpm
+      - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/g/gstreamer1-plugins-icamerasrc-0.0-15.20250325git7f90219.fc43.x86_64.rpm
+      - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/i/ipu6-camera-bins-0.0-19.20250627git30e8766.fc43.x86_64.rpm
+      - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/i/ipu6-camera-hal-0.0-26.20250627gitc933525.fc43.x86_64.rpm
     optfix:
       - Citrix
       - zoom
