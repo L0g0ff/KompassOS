@@ -78,8 +78,10 @@ modules:
       - https://github.com/PowerShell/PowerShell/releases/download/v7.4.13/powershell-lts-7.4.13-1.rh.x86_64.rpm
       - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
       # Intel IPU6 Camera support (for built-in laptop webcam)
-      # Dependencies: v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
-      # Already in base: v4l2loopback, intel-ipu6 kernel modules, intel-vsc-firmware
+      # Dependencies: dummy kmod -> v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
+      # Already in base: v4l2loopback, intel-ipu6 kernel modules (in-tree), intel-vsc-firmware
+      # Note: intel-ipu6-kmod-dummy satisfies RPM dependency without installing actual kmod (already in kernel)
+      - https://isos.kompassos.nl/rpms/intel-ipu6-kmod-dummy-0.0-23.kompass.noarch.rpm
       - https://download1.rpmfusion.org/free/fedora/releases/43/Everything/x86_64/os/Packages/v/v4l2-relayd-0.1.2-15.20220126git2e4d5c9.fc43.x86_64.rpm
       - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/g/gstreamer1-plugins-icamerasrc-0.0-15.20250325git7f90219.fc43.x86_64.rpm
       - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/i/ipu6-camera-bins-0.0-19.20250627git30e8766.fc43.x86_64.rpm
