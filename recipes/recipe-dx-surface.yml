@@ -7,14 +7,14 @@ description: Aurora Developer Experience for Microsft Surface devices with some 
 
 # the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/aurora-dx
-image-version: stable # latest is also supported if you want new updates ASAP
+image-version: latest # latest is also supported if you want new updates ASAP
 
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-surface.yml
 
 ## Local build test
 # Download base image first to speed up local build:
-# docker pull ghcr.io/ublue-os/aurora-dx:stable
+# docker pull ghcr.io/ublue-os/aurora-dx:latest
 # then build locally with:
 # bluebuild build ./recipes/recipe-dx-surface.yml 
 
