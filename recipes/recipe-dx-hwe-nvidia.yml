@@ -10,14 +10,14 @@ description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 # base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
 # image-version: 43 # latest is also supported if you want new updates ASAP
 base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
-image-version: 43 # latest is also supported if you want new updates ASAP
+image-version: stable # latest is also supported if you want new updates ASAP
 
 # Validate recipe
 # bluebuild validate --all-errors ./recipes/recipe-dx-hwe-nvidia.yml
 
 ## Local build test
 # Download base image first to speed up local build:
-# docker pull ghcr.io/ublue-os/aurora-dx-nvidia-open:43
+# docker pull ghcr.io/ublue-os/aurora-dx-nvidia-open:stable
 # then build locally with:
 # bluebuild build ./recipes/recipe-dx-hwe-nvidia.yml 
 
