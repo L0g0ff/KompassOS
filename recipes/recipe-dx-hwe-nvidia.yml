@@ -69,13 +69,11 @@ modules:
       - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
     install:
       - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
-      - https://zoom.us/client/6.4.6.1370/zoom_x86_64.rpm
-      - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
+      - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
+      - https://github.com/ramboxapp/download/releases/download/v2.6.0-beta.1/Rambox-2.6.0-beta.1-linux-x64.rpm
       - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-      # Wezterm COPR is Broken ATM so using direct download below. See: https://github.com/wezterm/wezterm/issues/7480
-      #- wezterm
-      - https://isos.kompassos.nl/rpms/wezterm-20260110_150208-1.g6e02c91e6.fc43.x86_64.rpm
-      - https://github.com/PowerShell/PowerShell/releases/download/v7.4.13/powershell-lts-7.4.13-1.rh.x86_64.rpm
+      - wezterm
+      - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
       - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
       # Intel IPU6 Camera support (for built-in laptop webcam)
       # Dependencies: dummy kmod -> v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
