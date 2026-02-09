@@ -1,40 +1,14 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 name: kompassos-dx-surface
-description: Aurora Developer Experience for Microsft Surface devices with some extra gravy.
-
-# the base image to build on top of (FROM) and the version tag to use
+description: Aurora Developer Experience for Microsoft Surface devices with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx
-image-version: latest # latest is also supported if you want new updates ASAP
-
-# Validate recipe
-# bluebuild validate --all-errors ./recipes/recipe-dx-surface.yml
-
-## Local build test
-# Download base image first to speed up local build:
-# docker pull ghcr.io/ublue-os/aurora-dx:latest
-# then build locally with:
-# bluebuild build ./recipes/recipe-dx-surface.yml 
+image-version: latest
 
 modules:
-  - type: files
-    files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-  
-  - type: justfiles
-    validate: false
-    include:
-    - configure_bridge_networking.just
-    - generate_iso.just
-    - install_claude_code.just
-    - install_copilot_cli.just
-    - install_cups_canon.just
-    - install_netextender.just
-    - install_vagrant.just
-    - remove_bridge_networking.just
-    - show_bridge_networking.just
+  - from-file: common-files.yml
 
+  # Surface Linux kernel repo and install (before common scripts)
   - type: dnf
     repos:
       files:
@@ -43,86 +17,7 @@ modules:
   - type: script
     scripts:
       - install_surface-kernel.sh
-      - disable_service_tailscale.sh
-      - enable_user_ydotool.sh
-      - install_system_tools.sh
-      - reconfigure_plymouth.sh
-      - set_fix_blurry_wayland_apps.sh
-      - set_sddm_start_numlock.sh
-      - set_ssh_unprivileged_ports.sh
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
-
-  - type: dnf
-    install:
-      packages:
-        - keeperpasswordmanager
-    repos:
-      cleanup: true
-      files:
-        - keeper.repo
-
-  - type: dnf
-    install:
-      packages:
-        - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
-        - wezterm
-        - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
-        - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-        - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
-        - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
-    repos:
-      cleanup: true
-      copr:
-        - wezfurlong/wezterm-nightly
-
-  - type: dnf
-    install:
-      packages:
-        - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
-    repos:
-      cleanup: true
-      files:
-        - https://repo.kompassos.nl/rpm/kompass.repo
-        - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
-
-  - type: script
-    scripts:
-      - z_cleanup.sh
-    
-  - type: default-flatpaks
-    configurations:
-      - notify: true
-        scope: system
-        repo:
-          url: https://flathub.org/repo/flathub.flatpakrepo
-          title: Flathub (system)
-        install:
-          - org.mozilla.Thunderbird
-          - org.mozilla.firefox
-          - org.kde.kcalc
-          - org.kde.gwenview
-          - org.kde.kontact
-          - org.kde.okular
-          - org.kde.kweather
-          - org.kde.kclock
-          - org.fkoehler.KTailctl
-          - org.kde.haruna
-          - com.github.tchx84.Flatseal
-          - com.ranfdev.DistroShelf
-          - io.github.flattool.Warehouse
-          - org.fedoraproject.MediaWriter
-          - io.missioncenter.MissionCenter
-          - org.gnome.DejaDup
-          - com.borgbase.Vorta
-          - io.github.input_leap.input-leap
-          - org.gtk.Gtk3theme.Breeze
-          - io.github.pwr_solaar.solaar
-          - org.gustavoperedo.FontDownloader
-          - org.kde.skanpage
-          - io.podman_desktop.PodmanDesktop
-          - io.github.getnf.embellish
-          - me.iepure.devtoolbox
-          - sh.loft.devpod
-
-  - type: initramfs #needed for plymouth
+  - from-file: common-scripts.yml
+  - from-file: common-dnf.yml
+  - from-file: common-finalize.yml

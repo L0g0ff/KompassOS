@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+
+modules:
+  - type: files
+    files:
+      - source: system
+        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+
+  - type: justfiles
+    validate: false
+    include:
+    - configure_bridge_networking.just
+    - generate_iso.just
+    - install_claude_code.just
+    - install_copilot_cli.just
+    - install_cups_canon.just
+    - install_netextender.just
+    - install_vagrant.just
+    - remove_bridge_networking.just
+    - show_bridge_networking.just
