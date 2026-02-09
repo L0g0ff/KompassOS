@@ -55,8 +55,6 @@ modules:
       cleanup: true
       files:
         - keeper.repo
-      keys:
-        - https://keepersecurity.com/desktop_electron/Linux/signing.pub
 
   - type: dnf
     install:
