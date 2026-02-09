@@ -93,8 +93,8 @@ modules:
   - type: script
     scripts:
       - install_pwsh_wsman.sh
+      - cleanup_staged_rpms.sh
 
-  
   - type: default-flatpaks
     configurations:
       - notify: true
