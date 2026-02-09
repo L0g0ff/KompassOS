@@ -1,14 +1,9 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
 name: kompassos-dx-hwe-nvidia
-# description will be included in the image's metadata
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 
-# the base image to build on top of (FROM) and the version tag to use
-# Revert to 42 because of Citrix issues in 43 (nothing provides webkit2gtk3 >= 2.26 needed by ICAClient-25.08.0.88-0.x86_64 from @commandline)
 # base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
-# image-version: 43 # latest is also supported if you want new updates ASAP
 base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
 image-version: stable # latest is also supported if you want new updates ASAP
 
@@ -21,10 +16,6 @@ image-version: stable # latest is also supported if you want new updates ASAP
 # then build locally with:
 # bluebuild build ./recipes/recipe-dx-hwe-nvidia.yml 
 
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
-
 modules:
   - type: files
     files:
@@ -36,13 +27,11 @@ modules:
     include:
     - configure_bridge_networking.just
     - generate_iso.just
-    - install_claude_distrobox.just
     - install_claude_code.just
     - install_copilot_cli.just
     - install_cups_canon.just
     - install_netextender.just
     - install_vagrant.just
-    - install_winboat.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
 
@@ -50,17 +39,24 @@ modules:
     scripts:
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
-      # - install_citrix.sh - need to fix
-      - install_keeper.sh
       - install_system_tools.sh
       - reconfigure_plymouth.sh
       - set_fix_blurry_wayland_apps.sh
       - set_sddm_start_numlock.sh
       - set_ssh_unprivileged_ports.sh
-      - z_cleanup.sh
-
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
+
+  - type: dnf
+    install:
+      packages:
+        - keeperpasswordmanager
+    repos:
+      cleanup: true
+      files:
+        - keeper.repo
+      keys:
+        - https://keepersecurity.com/desktop_electron/Linux/signing.pub
 
   - type: dnf
     install:
@@ -72,28 +68,36 @@ modules:
         - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
         - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
     repos:
+      cleanup: true
       copr:
         - wezfurlong/wezterm-nightly
 
-  - type: rpm-ostree
-    repos:
-      - https://repo.kompassos.nl/rpm/kompass.repo
-      - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
+  # Intel IPU6 Camera support (for built-in laptop webcam)
+  # Dependencies: dummy kmod -> v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
+  # Already in base: v4l2loopback, intel-ipu6 kernel modules (in-tree), intel-vsc-firmware
+  # Note: intel-ipu6-kmod-dummy satisfies RPM dependency without installing actual kmod (already in kernel)
+  - type: dnf
     install:
-      - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
-      # Intel IPU6 Camera support (for built-in laptop webcam)
-      # Dependencies: dummy kmod -> v4l2-relayd -> gstreamer plugin -> camera-bins -> camera-hal
-      # Already in base: v4l2loopback, intel-ipu6 kernel modules (in-tree), intel-vsc-firmware
-      # Note: intel-ipu6-kmod-dummy satisfies RPM dependency without installing actual kmod (already in kernel)
+      packages:
       - https://isos.kompassos.nl/rpms/intel-ipu6-kmod-dummy-0.0-23.kompass.noarch.rpm
       - https://download1.rpmfusion.org/free/fedora/releases/43/Everything/x86_64/os/Packages/v/v4l2-relayd-0.1.2-15.20220126git2e4d5c9.fc43.x86_64.rpm
       - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/g/gstreamer1-plugins-icamerasrc-0.0-15.20250325git7f90219.fc43.x86_64.rpm
       - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/i/ipu6-camera-bins-0.0-19.20250627git30e8766.fc43.x86_64.rpm
       - https://download1.rpmfusion.org/nonfree/fedora/releases/43/Everything/x86_64/os/Packages/i/ipu6-camera-hal-0.0-26.20250627gitc933525.fc43.x86_64.rpm
+    
+  - type: dnf
+    install:
+      packages:
+        - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
+    repos:
+      cleanup: true
+      files:
+        - https://repo.kompassos.nl/rpm/kompass.repo
+        - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
 
   - type: script
     scripts:
-      - install_pwsh_wsman.sh
+      - z_cleanup.sh
 
   - type: default-flatpaks
     configurations:

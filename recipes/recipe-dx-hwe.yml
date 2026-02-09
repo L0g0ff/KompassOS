@@ -1,11 +1,7 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
 name: kompassos-dx-hwe
-# description will be included in the image's metadata
 description: Aurora Developer Experience Hardware Enablement with some extra gravy.
-
-# the base image to build on top of (FROM) and the version tag to use
 base-image: ghcr.io/ublue-os/aurora-dx
 image-version: stable # latest is also supported if you want new updates ASAP
 
@@ -18,10 +14,6 @@ image-version: stable # latest is also supported if you want new updates ASAP
 # then build locally with:
 # bluebuild build ./recipes/recipe-dx-hwe.yml 
 
-
-# module configuration, executed in order
-# you can include multiple instances of the same module
-
 modules:
   - type: files
     files:
@@ -33,13 +25,11 @@ modules:
     include:
     - configure_bridge_networking.just
     - generate_iso.just
-    - install_claude_distrobox.just
     - install_claude_code.just
     - install_copilot_cli.just
     - install_cups_canon.just
     - install_netextender.just
     - install_vagrant.just
-    - install_winboat.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
 
@@ -47,16 +37,24 @@ modules:
     scripts:
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
-      # - install_citrix.sh - need to fix
-      - install_keeper.sh
       - install_system_tools.sh
       - reconfigure_plymouth.sh
       - set_fix_blurry_wayland_apps.sh
       - set_sddm_start_numlock.sh
       - set_ssh_unprivileged_ports.sh
-      - z_cleanup.sh
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
+
+  - type: dnf
+    install:
+      packages:
+        - keeperpasswordmanager
+    repos:
+      cleanup: true
+      files:
+        - keeper.repo
+      keys:
+        - https://keepersecurity.com/desktop_electron/Linux/signing.pub
 
   - type: dnf
     install:
@@ -66,21 +64,25 @@ modules:
         - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
         - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
+        - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
     repos:
+      cleanup: true
       copr:
         - wezfurlong/wezterm-nightly
 
-  - type: rpm-ostree
-    repos:
-      - https://repo.kompassos.nl/rpm/kompass.repo
-      - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
+  - type: dnf
     install:
-      - ICAClient
-      - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
+      packages:
+        - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
+    repos:
+      cleanup: true
+      files:
+        - https://repo.kompassos.nl/rpm/kompass.repo
+        - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
 
   - type: script
     scripts:
-      - install_pwsh_wsman.sh
+      - z_cleanup.sh
 
   - type: default-flatpaks
     configurations:
