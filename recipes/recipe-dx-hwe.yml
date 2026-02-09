@@ -58,29 +58,29 @@ modules:
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
+  - type: dnf
+    install:
+      packages:
+        - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
+        - wezterm
+        - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
+        - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+        - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
+    repos:
+      copr:
+        - wezfurlong/wezterm-nightly
+
   - type: rpm-ostree
     repos:
       - https://repo.kompassos.nl/rpm/kompass.repo
-      - https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-%OS_VERSION%/wezfurlong-wezterm-nightly-fedora-%OS_VERSION%.repo # wezterm repo
       - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
     install:
       - ICAClient
-      - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
-      - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
-      - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
-      - wezterm
-      - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
       - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
-    optfix:
-      - Citrix
-      - zoom
-      - Rambox
-      - google
 
   - type: script
     scripts:
       - install_pwsh_wsman.sh
-      - cleanup_staged_rpms.sh
 
   - type: default-flatpaks
     configurations:
