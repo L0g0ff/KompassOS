@@ -6,7 +6,6 @@ modules:
     scripts:
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
-      - install_system_tools.sh
       - reconfigure_plymouth.sh
       - set_fix_blurry_wayland_apps.sh
       - set_sddm_start_numlock.sh

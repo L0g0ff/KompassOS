@@ -14,6 +14,16 @@ modules:
   - type: dnf
     install:
       packages:
+        - nmap
+        - net-snmp-utils
+        - telnet
+        - screen
+        - libvirt-devel
+        - tilix
+        - plymouth-plugin-script
+        - fish
+        - waydroid
+        - gssntlmssp
         - https://github.com/ramboxapp/download/releases/download/v2.5.2/Rambox-2.5.2-linux-x64.rpm
         - wezterm
         - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm

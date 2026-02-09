@@ -41,3 +41,4 @@ jobs:
 
           # enabled by default, disable if your image is small and you want faster builds
           maximize_build_space: true
+          rechunk: true # re-chunk the final image to be more efficient for distribution, disable if you want faster builds and don't care about distribution size
