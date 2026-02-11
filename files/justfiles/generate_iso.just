@@ -10,7 +10,7 @@ generate-iso-kompassos-dx-hwe:
     echo "Changing to ISO directory..."
     cd ~/iso
     echo "Generating ISO..."
-    sudo bluebuild generate-iso --iso-name kompassos-dx-hwe.iso image ghcr.io/l0g0ff/kompassos-dx-hwe:latest
+    sudo bluebuild generate-iso --iso-name kompassos-dx-hwe.iso --variant kinoite image ghcr.io/l0g0ff/kompassos-dx-hwe:latest
     echo "ISO generated successfully in ~/iso/"
 
 # Generate ISO for KompassOS DX HWE Nvidia
@@ -23,7 +23,7 @@ generate-iso-kompassos-dx-hwe-nvidia:
     echo "Changing to ISO directory..."
     cd ~/iso
     echo "Generating ISO..."
-    sudo bluebuild generate-iso --iso-name kompassos-dx-hwe-nvidia.iso image ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:latest
+    sudo bluebuild generate-iso --iso-name kompassos-dx-hwe-nvidia.iso --variant kinoite image ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:latest
     echo "ISO generated successfully in ~/iso/"
 
 # Generate ISO for KompassOS DX Surface
