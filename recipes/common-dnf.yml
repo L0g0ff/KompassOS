@@ -32,8 +32,8 @@ modules:
         - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
     repos:
       cleanup: true
-      copr:
-        - wezfurlong/wezterm-nightly
+      files:
+        - https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-43/wezfurlong-wezterm-nightly-fedora-43.repo
 
   - type: dnf
     install:
