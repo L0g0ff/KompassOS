@@ -3,7 +3,7 @@
 name: kompassos-dx-hwe
 description: Aurora Developer Experience Hardware Enablement with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx
-image-version: stable
+image-version: 43-20260223
 
 modules:
   - from-file: common-files.yml

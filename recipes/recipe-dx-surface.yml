@@ -3,7 +3,7 @@
 name: kompassos-dx-surface
 description: Aurora Developer Experience for Microsoft Surface devices with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx
-image-version: latest
+image-version: 43-20260223
 
 modules:
   - from-file: common-files.yml

@@ -3,7 +3,7 @@
 name: kompassos-dx-hwe-nvidia
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
-image-version: stable
+image-version: 43-20260223
 
 modules:
   - from-file: common-files.yml
