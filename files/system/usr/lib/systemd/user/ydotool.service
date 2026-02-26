@@ -5,7 +5,8 @@ After=graphical.target
 [Service]
 Type=simple
 Restart=always
-ExecStart=/usr/bin/ydotoold --socket-path="/run/user/1000/.ydotool_socket" --socket-own="1000:1000"
+#ExecStart=/usr/bin/ydotoold --socket-path="/run/user/1000/.ydotool_socket" --socket-own="1000:1000"
+ExecStart=/usr/bin/ydotoold --socket-path=%t/.ydotool_socket --socket-own=%U:%U
 ExecReload=/usr/bin/kill -HUP $MAINPID
 KillMode=process
 TimeoutSec=180
