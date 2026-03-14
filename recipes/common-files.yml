@@ -10,10 +10,12 @@ modules:
   - type: justfiles
     validate: false
     include:
+    - activate_webcam.just
     - configure_bridge_networking.just
     - generate_iso.just
     - install_claude_code.just
     - install_codex_cli.just
+    - install_gemini_cli.just
     - install_copilot_cli.just
     - install_cups_canon.just
     - install_netextender.just
