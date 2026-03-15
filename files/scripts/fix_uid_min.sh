@@ -12,4 +12,4 @@ set -x
 # Anaconda to assign UID 800+ instead of 1000, breaking SDDM and KDE Plasma.
 # See: https://gitlab.com/fedora/ostree/sig/-/issues/90
 #
-sed -i 's/^UID_MIN[[:space:]].*$/UID_MIN\t\t1000/' /usr/etc/login.defs
+sed -i 's/^UID_MIN[[:space:]].*$/UID_MIN\t\t1000/' /etc/login.defs
