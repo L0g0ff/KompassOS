@@ -43,38 +43,27 @@ enable-webcam:
             ']' \
             > ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf
 
-        # Firefox: enable PipeWire camera
-        echo "${blue}Configuring Firefox...${normal}"
-        PROFILES_DIR="$HOME/.mozilla/firefox"
-        if [ -d "$PROFILES_DIR" ]; then
-            for profile in "$PROFILES_DIR"/*.default* "$PROFILES_DIR"/*.default-release*; do
-                if [ -d "$profile" ]; then
-                    if ! grep -q 'media.webrtc.camera.allow-pipewire' "$profile/user.js" 2>/dev/null; then
-                        echo 'user_pref("media.webrtc.camera.allow-pipewire", true);' >> "$profile/user.js"
-                    fi
-                fi
-            done
-        else
-            echo "${yellow}Firefox profile not found. Set manually:${normal}"
-            echo "about:config → media.webrtc.camera.allow-pipewire → true"
-        fi
-
-        # Chrome: enable PipeWire camera (append if not present)
-        echo "${blue}Configuring Chrome...${normal}"
-        sudo mkdir -p /etc/opt/chrome/
-        sudo touch /etc/opt/chrome/chrome-flags.conf
-        if ! grep -q 'WebRTCPipeWireCamera' /etc/opt/chrome/chrome-flags.conf 2>/dev/null; then
-            echo '--enable-features=WebRTCPipeWireCamera' | sudo tee -a /etc/opt/chrome/chrome-flags.conf > /dev/null
-        fi
-
         # Restart WirePlumber
         echo "${blue}Restarting WirePlumber...${normal}"
         systemctl --user restart wireplumber
 
         echo ""
-        echo "${green}Webcam enabled!${normal}"
-        echo "Restart Firefox and Chrome, then test:"
-        echo "  firefox https://mozilla.github.io/webrtc-landing/gum_test.html"
+        echo "${green}WirePlumber configured!${normal}"
+        echo ""
+        echo "${yellow}Now enable PipeWire camera in your browser:${normal}"
+        echo ""
+        echo "  Firefox:"
+        echo "    1. Open about:config"
+        echo "    2. Search: media.webrtc.camera.allow-pipewire"
+        echo "    3. Set to: true"
+        echo "    4. Restart Firefox"
+        echo ""
+        echo "  Chrome:"
+        echo "    1. Open chrome://flags/#enable-webrtc-pipewire-camera"
+        echo "    2. Set to: Enabled"
+        echo "    3. Relaunch Chrome"
+        echo ""
+        echo "Test: firefox https://mozilla.github.io/webrtc-landing/gum_test.html"
     fi
 
 # Disable FOSS IPU6 webcam (rollback)
@@ -92,30 +81,20 @@ disable-webcam:
         echo "${blue}Removing WirePlumber config...${normal}"
         rm -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf
 
-        # Remove Firefox user.js entry
-        echo "${blue}Cleaning Firefox config...${normal}"
-        PROFILES_DIR="$HOME/.mozilla/firefox"
-        if [ -d "$PROFILES_DIR" ]; then
-            for profile in "$PROFILES_DIR"/*.default* "$PROFILES_DIR"/*.default-release*; do
-                if [ -f "$profile/user.js" ]; then
-                    sed -i '/media.webrtc.camera.allow-pipewire/d' "$profile/user.js"
-                fi
-            done
-        fi
-
-        # Remove only our Chrome flag line
-        echo "${blue}Cleaning Chrome config...${normal}"
-        if [ -f /etc/opt/chrome/chrome-flags.conf ]; then
-            sudo sed -i '/WebRTCPipeWireCamera/d' /etc/opt/chrome/chrome-flags.conf
-        fi
-
         # Restart WirePlumber
         echo "${blue}Restarting WirePlumber...${normal}"
         systemctl --user restart wireplumber
 
         echo ""
-        echo "${green}Rollback complete!${normal}"
-        echo "Restart Firefox and Chrome to take effect."
+        echo "${green}WirePlumber restored!${normal}"
+        echo ""
+        echo "${yellow}Don't forget to revert browser settings manually:${normal}"
+        echo ""
+        echo "  Firefox:"
+        echo "    about:config → media.webrtc.camera.allow-pipewire → false"
+        echo ""
+        echo "  Chrome:"
+        echo "    chrome://flags/#enable-webrtc-pipewire-camera → Default"
     fi
 
 # Check webcam status
@@ -139,4 +118,5 @@ check-webcam:
     echo ""
     echo "Config:"
     echo "  WirePlumber: $([ -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf ] && echo 'applied' || echo 'not applied')"
-    echo "  Chrome:      $(grep -q 'WebRTCPipeWireCamera' /etc/opt/chrome/chrome-flags.conf 2>/dev/null && echo 'applied' || echo 'not applied')"
+    echo "  Firefox:     about:config → media.webrtc.camera.allow-pipewire (set manually)"
+    echo "  Chrome:      chrome://flags/#enable-webrtc-pipewire-camera (set manually)"
