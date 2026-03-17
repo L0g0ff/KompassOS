@@ -11,6 +11,7 @@ modules:
     validate: false
     include:
     - activate_webcam.just
+    - kill_citrix.just
     - configure_bridge_networking.just
     - generate_iso.just
     - install_claude_code.just
