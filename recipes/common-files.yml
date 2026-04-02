@@ -24,3 +24,4 @@ modules:
     - install_vagrant.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
+    - setup_clamav.just
