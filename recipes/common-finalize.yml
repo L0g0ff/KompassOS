@@ -39,5 +39,6 @@ modules:
           - io.podman_desktop.PodmanDesktop
           - io.github.getnf.embellish
           - me.iepure.devtoolbox
+          - org.ferdium.Ferdium
 
   - type: initramfs #needed for plymouth
