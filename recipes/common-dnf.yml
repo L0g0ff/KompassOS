@@ -27,6 +27,9 @@ modules:
         - wezterm
         - libcamera-qcam
         - v4l-utils
+        - remmina 
+        - ffmpeg 
+        - ffmpeg-libs
         - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
         - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
