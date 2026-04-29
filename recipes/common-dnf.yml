@@ -38,6 +38,7 @@ modules:
     install:
       packages:
         #- https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
+        - https://isos.kompassos.nl/webkit2gtk3-2.52.3-0.el10.1.x86_64.rpm
         - https://isos.kompassos.nl/ICAClient-rhel-26.01.0.150-0.x86_64.rpm
     # repos:
     #   cleanup: true
