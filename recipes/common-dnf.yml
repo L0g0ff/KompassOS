@@ -37,9 +37,10 @@ modules:
   - type: dnf
     install:
       packages:
-        - https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
-    repos:
-      cleanup: true
-      files:
-        - https://repo.kompassos.nl/rpm/kompass.repo
-        - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
+        #- https://repo.kompassos.nl/rpm/ICAClient-rhel-25.08.0.88-0.x86_64.rpm
+        - https://isos.kompassos.nl/ICAClient-rhel-26.01.0.150-0.x86_64.rpm
+    # repos:
+    #   cleanup: true
+    #   files:
+    #     - https://repo.kompassos.nl/rpm/kompass.repo
+    #     - https://copr.fedorainfracloud.org/coprs/mlampe/webkit2gtk3/repo/rhel+epel-10/mlampe-webkit2gtk3-rhel+epel-10.repo # Workaround for Citrix ICAClient dependency on webkit2gtk3: https://community.citrix.com/forums/topic/258561-fedora-43-no-longer-provides-webkit2gtk3-226/
