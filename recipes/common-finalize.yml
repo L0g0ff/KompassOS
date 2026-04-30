@@ -40,5 +40,6 @@ modules:
           - io.github.getnf.embellish
           - me.iepure.devtoolbox
           - org.ferdium.Ferdium
+          - org.remmina.Remmina
 
   - type: initramfs #needed for plymouth
