@@ -41,5 +41,6 @@ modules:
           - me.iepure.devtoolbox
           - org.ferdium.Ferdium
           - org.remmina.Remmina
+          
 
   - type: initramfs #needed for plymouth

@@ -8,6 +8,7 @@ set -x
 #networkmanager takes it over in /etc/NetworkManager/conf.d/90-dns-default.conf
 rm -f /etc/resolv.conf
 
+
 #
 # Overwrite Aurora branding for KompassOS backgrounds
 #
