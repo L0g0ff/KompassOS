@@ -6,8 +6,8 @@ set -euo pipefail
 set -x
 
 #networkmanager takes it over in /etc/NetworkManager/conf.d/90-dns-default.conf
-rm -f /etc/resolv.conf
-
+#rm -f /etc/resolv.conf
+#systemctl restart NetworkManager
 
 #
 # Overwrite Aurora branding for KompassOS backgrounds
