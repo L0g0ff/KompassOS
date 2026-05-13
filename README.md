@@ -55,13 +55,13 @@ The `latest` tag will automatically point to the latest build. That build will s
 ## Dev Branch — Testing Only
 
 > [!WARNING]
-> **Niet voor productiegebruik.** De `dev` branch is uitsluitend bedoeld om wijzigingen te testen vóórdat ze naar `main` gaan. Builds van `dev` kunnen instabiel zijn of onverwacht gedrag vertonen. Gebruik deze branch **nooit** op een systeem waarvan je afhankelijk bent.
+> **Not for production use.** The `dev` branch is strictly for testing changes before they land on `main`. Builds from `dev` may be unstable or behave unexpectedly. **Never** use this branch on a system you depend on.
 
-De `dev` branch bouwt alleen de `recipe-dx-hwe-nvidia.yml` variant (Nvidia) om CI-feedback te versnellen. De branch wordt periodiek gereset naar `main`.
+The `dev` branch only builds the `recipe-dx-hwe-nvidia.yml` variant (Nvidia) to speed up CI feedback. It is periodically reset to `main`.
 
-### Rebasen naar de dev image
+### Rebase to the dev image
 
-- Rebase eerst naar de unsigned image:
+- First rebase to the unsigned image:
   ```
   rpm-ostree rebase ostree-unverified-registry:ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:dev
   ```
@@ -69,19 +69,19 @@ De `dev` branch bouwt alleen de `recipe-dx-hwe-nvidia.yml` variant (Nvidia) om C
   ```
   systemctl reboot
   ```
-- Rebase dan naar de signed image:
+- Then rebase to the signed image:
   ```
   rpm-ostree rebase ostree-image-signed:docker://ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:dev
   ```
-- Reboot nogmaals om de installatie te voltooien.
+- Reboot again to complete the installation.
 
-### Terug naar de stabiele image
+### Back to the stable image
 
-Rebase terug naar de `main` image op dezelfde manier als beschreven onder [Installation](#installation), maar vervang `:dev` door `:latest`.
+Rebase back to the `main` image the same way as described under [Installation](#installation), replacing `:dev` with `:latest`.
 
-### Dev branch bijwerken naar main
+### Keeping dev up to date with main
 
-De `dev` branch wordt regelmatig gereset naar `main`:
+The `dev` branch is periodically reset to match `main`:
 
 ```bash
 git checkout dev
