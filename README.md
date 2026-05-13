@@ -52,6 +52,43 @@ To rebase an existing atomic Fedora installation to the latest build:
 
 The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
 
+## Dev Branch — Testing Only
+
+> [!WARNING]
+> **Niet voor productiegebruik.** De `dev` branch is uitsluitend bedoeld om wijzigingen te testen vóórdat ze naar `main` gaan. Builds van `dev` kunnen instabiel zijn of onverwacht gedrag vertonen. Gebruik deze branch **nooit** op een systeem waarvan je afhankelijk bent.
+
+De `dev` branch bouwt alleen de `recipe-dx-hwe-nvidia.yml` variant (Nvidia) om CI-feedback te versnellen. De branch wordt periodiek gereset naar `main`.
+
+### Rebasen naar de dev image
+
+- Rebase eerst naar de unsigned image:
+  ```
+  rpm-ostree rebase ostree-unverified-registry:ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:dev
+  ```
+- Reboot:
+  ```
+  systemctl reboot
+  ```
+- Rebase dan naar de signed image:
+  ```
+  rpm-ostree rebase ostree-image-signed:docker://ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:dev
+  ```
+- Reboot nogmaals om de installatie te voltooien.
+
+### Terug naar de stabiele image
+
+Rebase terug naar de `main` image op dezelfde manier als beschreven onder [Installation](#installation), maar vervang `:dev` door `:latest`.
+
+### Dev branch bijwerken naar main
+
+De `dev` branch wordt regelmatig gereset naar `main`:
+
+```bash
+git checkout dev
+git reset --hard origin/main
+git push --force origin dev
+```
+
 ## Proxmox VE
 
 KompassOS can be deployed as a virtual machine on [Proxmox VE](https://www.proxmox.com/) using a community-maintained helper script:
