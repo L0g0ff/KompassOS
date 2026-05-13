@@ -52,6 +52,18 @@ To rebase an existing atomic Fedora installation to the latest build:
 
 The `latest` tag will automatically point to the latest build. That build will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
 
+## Proxmox VE
+
+KompassOS can be deployed as a virtual machine on [Proxmox VE](https://www.proxmox.com/) using a community-maintained helper script:
+
+**[KompassOS Proxmox VE Helper Script](https://github.com/R3inoudR/KompassOS_ProxmoxVE-HelperScript)**
+
+The script automates the creation of a KompassOS VM with sensible defaults. Run it directly on your Proxmox host:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/R3inoudR/KompassOS_ProxmoxVE-HelperScript/refs/heads/main/kompassos-vm.sh)"
+```
+
 ## ISO
 
 You can download the ISO from [www.kompassos.nl](https://www.kompassos.nl). The ISO provides a bootable image that allows you to try out KompassOS without installing it on your system. It is ideal for testing or running a live session.
