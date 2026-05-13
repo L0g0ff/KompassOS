@@ -27,3 +27,4 @@ modules:
     - setup_clamav.just
     - install_kompassos_flatpaks.just
     - usroverlay.just
+    - fix_dell_wd25.just
