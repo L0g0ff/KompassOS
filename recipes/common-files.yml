@@ -26,3 +26,4 @@ modules:
     - show_bridge_networking.just
     - setup_clamav.just
     - install_kompassos_flatpaks.just
+    - usroverlay.just
