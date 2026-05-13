@@ -1,4 +1,5 @@
 # Test this Just file: /usr/bin/just --justfile files/justfiles/install_kompassos_flatpaks.just --choose
+# dev test commit
 
 # Install KompassOS flatpaks (re-run if network was unavailable during first boot)
 [group('System')]
