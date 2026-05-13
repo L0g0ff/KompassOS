@@ -15,6 +15,8 @@ KompassOS is a custom Fedora Silverblue (Aurora/KDE) image built with [Blue-Buil
 
 All three share common module files via `from-file:` includes.
 
+**Dev branch**: pushes to `dev` trigger a reduced matrix — only `recipe-dx-hwe-nvidia.yml` builds, for faster CI feedback during testing. The `dev` branch is periodically reset to `main` (`git reset --hard origin/main && git push --force origin dev`). Never use `dev` builds in production.
+
 **To test a justfile locally** (on a running KompassOS system):
 ```
 just --justfile files/justfiles/<name>.just --choose
