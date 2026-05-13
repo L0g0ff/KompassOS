@@ -25,3 +25,4 @@ modules:
     - remove_bridge_networking.just
     - show_bridge_networking.just
     - setup_clamav.just
+    - install_kompassos_flatpaks.just
