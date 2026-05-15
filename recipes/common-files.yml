@@ -28,3 +28,4 @@ modules:
     - install_kompassos_flatpaks.just
     - usroverlay.just
     - fix_dell_wd25.just
+    - setup_zsh.just
