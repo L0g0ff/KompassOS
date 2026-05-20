@@ -53,6 +53,18 @@ setup-zsh:
             fi
         fi
 
+        # Configure custom prompt (username@hostname, full path, git info, $/#)
+        if [ -f "$HOME/.zshrc" ]; then
+            if ! grep -q 'Custom prompt:' "$HOME/.zshrc"; then
+                echo "${blue}Configuring custom prompt...${normal}"
+                echo '' >> "$HOME/.zshrc"
+                echo '# Custom prompt: ${ret_status} = arrow (green=ok, red=error) | %n = username | %m = hostname | %~ = full path | git_prompt_info = branch/status | %(#.#.$) = $ for user, # for root' >> "$HOME/.zshrc"
+                echo 'PROMPT='"'"'${ret_status} %{$fg_bold[green]%}%n@%m%{$reset_color%} %{$fg[cyan]%}%~%{$reset_color%} $(git_prompt_info)%(#.#.$) '"'"'' >> "$HOME/.zshrc"
+            else
+                echo "${blue}Custom prompt already configured, skipping.${normal}"
+            fi
+        fi
+
         # Set zsh as default shell
         if [ "$SHELL" != "$(which zsh)" ]; then
             echo "${blue}Setting zsh as default shell...${normal}"
