@@ -29,3 +29,4 @@ modules:
     - usroverlay.just
     - fix_dell_wd25.just
     - setup_zsh.just
+    - wifi_boost.just
