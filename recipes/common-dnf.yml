@@ -20,6 +20,7 @@ modules:
         - screen
         - remmina
         - remmina-plugins-rdp
+        - openh264
         - libvirt-devel
         - tilix
         - plymouth-plugin-script
