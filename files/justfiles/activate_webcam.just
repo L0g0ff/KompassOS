@@ -63,6 +63,11 @@ enable-webcam:
         echo "    2. Set to: Enabled"
         echo "    3. Relaunch Chrome"
         echo ""
+        echo "  Teams for Linux (Flatpak):"
+        echo "    Edit ~/.var/app/com.github.IsmaelMartinez.teams_for_linux/config/teams-for-linux/config.json"
+        echo '    Add: { "electronCLIFlags": [["enable-features", "WebRtcPipeWireCamera"]] }'
+        echo "    Restart Teams for Linux"
+        echo ""
         echo "Test: firefox https://mozilla.github.io/webrtc-landing/gum_test.html"
     fi
 
@@ -95,6 +100,11 @@ disable-webcam:
         echo ""
         echo "  Chrome:"
         echo "    chrome://flags/#enable-webrtc-pipewire-camera → Default"
+        echo ""
+        echo "  Teams for Linux (Flatpak):"
+        echo "    Remove the WebRtcPipeWireCamera entry from:"
+        echo "    ~/.var/app/com.github.IsmaelMartinez.teams_for_linux/config/teams-for-linux/config.json"
+        echo "    Restart Teams for Linux"
     fi
 
 # Check webcam status
