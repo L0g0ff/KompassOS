@@ -18,6 +18,8 @@ modules:
         - net-snmp-utils
         - telnet
         - screen
+        - remmina
+        - remmina-plugins-rdp
         - libvirt-devel
         - tilix
         - plymouth-plugin-script
