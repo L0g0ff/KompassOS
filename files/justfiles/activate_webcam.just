@@ -43,6 +43,18 @@ enable-webcam:
             ']' \
             > ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf
 
+        # Nvidia: force Mesa EGL for libcamera GPU debayering.
+        # Without this, libcamera picks the Nvidia EGL provider which fails
+        # with GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT and produces no frames.
+        echo ""
+        if $(gum confirm --default=false "Are you on an Nvidia GPU system? (Apply Mesa EGL fix for WirePlumber)"); then
+            echo "${blue}Applying Nvidia Mesa EGL fix...${normal}"
+            mkdir -p ~/.config/systemd/user/wireplumber.service.d/
+            printf '[Service]\nEnvironment=__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json\n' \
+                > ~/.config/systemd/user/wireplumber.service.d/50-libcamera-egl.conf
+            systemctl --user daemon-reload
+        fi
+
         # Restart WirePlumber
         echo "${blue}Restarting WirePlumber...${normal}"
         systemctl --user restart wireplumber
@@ -85,6 +97,8 @@ disable-webcam:
         # Remove WirePlumber config
         echo "${blue}Removing WirePlumber config...${normal}"
         rm -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf
+        rm -f ~/.config/systemd/user/wireplumber.service.d/50-libcamera-egl.conf
+        systemctl --user daemon-reload
 
         # Restart WirePlumber
         echo "${blue}Restarting WirePlumber...${normal}"
@@ -127,6 +141,7 @@ check-webcam:
     wpctl status 2>/dev/null | grep -E "libcamera|Front Camera|ov02c10" || echo "  no libcamera device"
     echo ""
     echo "Config:"
-    echo "  WirePlumber: $([ -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf ] && echo 'applied' || echo 'not applied')"
-    echo "  Firefox:     about:config → media.webrtc.camera.allow-pipewire (set manually)"
-    echo "  Chrome:      chrome://flags/#enable-webrtc-pipewire-camera (set manually)"
+    echo "  WirePlumber:    $([ -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf ] && echo 'applied' || echo 'not applied')"
+    echo "  Nvidia EGL fix: $([ -f ~/.config/systemd/user/wireplumber.service.d/50-libcamera-egl.conf ] && echo 'applied' || echo 'not applied')"
+    echo "  Firefox:        about:config → media.webrtc.camera.allow-pipewire (set manually)"
+    echo "  Chrome:         chrome://flags/#enable-webrtc-pipewire-camera (set manually)"
