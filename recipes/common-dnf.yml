@@ -36,7 +36,7 @@ modules:
       cleanup: true
       files:
         - https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-43/wezfurlong-wezterm-nightly-fedora-43.repo
-        - fedora-cisco-openh264.repo
+        # - fedora-cisco-openh264.repo
 
   - type: dnf
     install:
