@@ -53,3 +53,24 @@ jobs:
           # enabled by default, disable if your image is small and you want faster builds
           maximize_build_space: true
           rechunk: false # re-chunk the final image to be more efficient for distribution, disable if you want faster builds and don't care about distribution size
+
+      - name: Notify ntfy.sh
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          if [ "${{ job.status }}" = "success" ]; then
+            curl -s \
+              -H "Title: KompassOS build succeeded" \
+              -H "Tags: white_check_mark" \
+              -H "Click: ${RUN_URL}" \
+              -d "${{ matrix.recipe }} built successfully" \
+              https://ntfy.sh/kompassos-alerts
+          else
+            curl -s \
+              -H "Title: KompassOS build FAILED" \
+              -H "Priority: high" \
+              -H "Tags: rotating_light" \
+              -H "Click: ${RUN_URL}" \
+              -d "${{ matrix.recipe }} failed" \
+              https://ntfy.sh/kompassos-alerts
+          fi
