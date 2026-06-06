@@ -5,15 +5,6 @@ modules:
   - type: dnf
     install:
       packages:
-        - keeperpasswordmanager
-    repos:
-      cleanup: true
-      files:
-        - keeper.repo
-
-  - type: dnf
-    install:
-      packages:
         - nmap
         - net-snmp-utils
         - telnet
@@ -25,6 +16,7 @@ modules:
         - gssntlmssp
         - wezterm
         - v4l-utils
+        - https://www.keepersecurity.com/desktop_electron/Linux/repo/rpm/keeperpasswordmanager-18.1.0-1.x86_64.rpm
         - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
         - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
