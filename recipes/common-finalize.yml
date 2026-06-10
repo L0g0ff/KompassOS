@@ -44,3 +44,7 @@ modules:
           
 
   - type: initramfs #needed for plymouth
+
+  - type: os-release
+    properties:
+      VARIANT_ID: kompassos
