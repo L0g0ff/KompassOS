@@ -31,3 +31,4 @@ modules:
     - setup_zsh.just
     - wifi_boost.just
     - show_user_count.just
+    - phone_webcam.just
