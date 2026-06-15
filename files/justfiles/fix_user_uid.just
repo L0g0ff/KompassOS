@@ -30,7 +30,7 @@ fix-uid:
     echo ""
     echo "A one-time service will be created to apply the fix on next boot."
     echo ""
-    echo "  ${blue}usermod -u $new_uid $username && groupmod -g $new_uid $username${normal}"
+    echo "  ${blue}usermod -u $new_uid $username && groupmod -g $new_uid $username && chown -R $new_uid:$new_uid /home/$username${normal}"
     echo ""
 
     if $(gum confirm "Schedule fix and reboot?"); then
@@ -42,7 +42,7 @@ fix-uid:
             echo ''
             echo '[Service]'
             echo 'Type=oneshot'
-            echo "ExecStart=/bin/bash -c 'usermod -u $new_uid $username && groupmod -g $new_uid $username'"
+            echo "ExecStart=/bin/bash -c 'usermod -u $new_uid $username && groupmod -g $new_uid $username && chown -R $new_uid:$new_uid /home/$username'"
             echo 'ExecStartPost=/bin/systemctl disable fix-uid-once.service'
             echo 'ExecStartPost=/bin/rm /etc/systemd/system/fix-uid-once.service'
             echo ''
