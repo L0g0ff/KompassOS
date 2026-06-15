@@ -17,7 +17,8 @@ modules:
         - wezterm
         - v4l-utils
         - keeperpasswordmanager
-        - https://cdn.zoom.us/prod/6.7.2.6498/zoom_x86_64.rpm
+        - zoom
+        - ICAClient
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
         - https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell-7.5.4-1.rh.x86_64.rpm
         - https://github.com/TibixDev/winboat/releases/download/v0.9.0/winboat-0.9.0-x86_64.rpm
@@ -26,12 +27,4 @@ modules:
       files:
         - kompassos.repo
         - https://copr.fedorainfracloud.org/coprs/wezfurlong/wezterm-nightly/repo/fedora-43/wezfurlong-wezterm-nightly-fedora-43.repo
-
-  - type: dnf
-    install:
-      packages:
-        - https://isos.kompassos.nl/webkit2gtk3-jsc-2.52.3-0.el10.1.x86_64.rpm
-        - https://isos.kompassos.nl/webkit2gtk3-2.52.3-0.el10.1.x86_64.rpm
-        - https://isos.kompassos.nl/libicu74-74.2-3.fc43.x86_64.rpm
-        - https://isos.kompassos.nl/ICAClient-rhel-26.01.0.150-0.x86_64.rpm
 
