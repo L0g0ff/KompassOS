@@ -1,0 +1,6 @@
+[kompassos]
+name=KompassOS RPM mirror
+baseurl=https://repo.kompassos.nl/rpm/
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
