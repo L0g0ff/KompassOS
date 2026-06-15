@@ -42,7 +42,7 @@ fix-uid:
             echo ''
             echo '[Service]'
             echo 'Type=oneshot'
-            echo "ExecStart=/bin/bash -c 'usermod -u $new_uid $username && groupmod -g $new_uid $username && chown -R $new_uid:$new_uid /home/$username'"
+            echo "ExecStart=/bin/bash -c 'usermod -u $new_uid $username; ec=\$?; [ \$ec -eq 0 ] || [ \$ec -eq 12 ] || exit \$ec; groupmod -g $new_uid $username && chown -R $new_uid:$new_uid /home/$username'"
             echo 'ExecStartPost=/bin/systemctl disable fix-uid-once.service'
             echo 'ExecStartPost=/bin/rm /etc/systemd/system/fix-uid-once.service'
             echo ''
