@@ -7,7 +7,7 @@ show-user-count:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
 
-    VARIANT_ID=$(grep '^VARIANT_ID=' /etc/os-release | cut -d= -f2)
+    VARIANT_ID=$(. /etc/os-release && echo "$VARIANT_ID")
     CSV_URL="https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv"
     TMP=$(mktemp /tmp/countme.XXXXXX.csv)
     trap 'rm -f "$TMP"' EXIT
