@@ -96,8 +96,10 @@ tee -a /etc/xdg/kwalletrc <<'EOF'
 Enabled=false
 EOF
 
-# Copy flatpaks for post-install transfer
-cp -a /var/lib/flatpak /var/lib/flatpak_original
+# Copy flatpaks for post-install transfer (only if pre-installed in image)
+if [[ -d /var/lib/flatpak ]]; then
+    cp -a /var/lib/flatpak /var/lib/flatpak_original
+fi
 
 # Kickstart files
 mkdir -p /usr/share/anaconda/post-scripts
@@ -123,11 +125,13 @@ EOF
 
 tee /usr/share/anaconda/post-scripts/install-flatpaks.ks <<'EOF'
 %post --erroronfail --nochroot
-deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
-target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
-mkdir -p "$target"
-rsync -aAXUHKP /var/lib/flatpak_original/ "$target/flatpak"
-sync
+if [[ -d /var/lib/flatpak_original ]]; then
+    deployment="$(ostree rev-parse --repo=/mnt/sysimage/ostree/repo ostree/0/1/0)"
+    target="/mnt/sysimage/ostree/deploy/default/deploy/$deployment.0/var/lib/"
+    mkdir -p "$target"
+    rsync -aAXUHKP /var/lib/flatpak_original/ "$target/flatpak"
+    sync
+fi
 %end
 EOF
 
