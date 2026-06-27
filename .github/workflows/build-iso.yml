@@ -1,0 +1,86 @@
+---
+name: Build Live ISO
+
+on:
+  workflow_dispatch:
+    inputs:
+      upload_r2:
+        description: "Upload ISO to Cloudflare R2"
+        type: boolean
+        default: true
+  push:
+    branches: [dev]
+    paths: ["iso_files/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-iso:
+    name: Build ISO (${{ matrix.variant }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: hwe-nvidia
+            image_ref: ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia
+
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4
+
+      - name: Maximize build space
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
+
+      - name: Setup Just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4
+
+      - name: Build ISO
+        id: build
+        uses: ublue-os/titanoboa@840217d97bd0bc9a52466508c54d8dda5c5ba2fd
+        with:
+          image-ref: ${{ matrix.image_ref }}:latest
+          hook-post-rootfs: ${{ github.workspace }}/iso_files/configure_iso_kompassos.sh
+
+      - name: Rename ISO
+        id: rename
+        env:
+          OUTPUT_PATH: ${{ steps.build.outputs.iso-dest }}
+          ISO_NAME: kompassos-dx-${{ matrix.variant }}-live
+        run: |
+          set -eoux pipefail
+          mkdir -p output
+          mv "${OUTPUT_PATH}" "output/${ISO_NAME}.iso"
+          (cd output && sha256sum "${ISO_NAME}.iso" | tee "${ISO_NAME}.iso-CHECKSUM")
+          echo "output_dir=$(pwd)/output" >> "${GITHUB_OUTPUT}"
+          echo "iso_name=${ISO_NAME}" >> "${GITHUB_OUTPUT}"
+
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.rename.outputs.iso_name }}
+          path: |
+            ${{ steps.rename.outputs.output_dir }}/${{ steps.rename.outputs.iso_name }}.iso
+            ${{ steps.rename.outputs.output_dir }}/${{ steps.rename.outputs.iso_name }}.iso-CHECKSUM
+          if-no-files-found: error
+
+      - name: Upload to Cloudflare R2
+        if: github.event_name == 'workflow_dispatch' && inputs.upload_r2 || github.event_name == 'push'
+        env:
+          RCLONE_CONFIG_R2_TYPE: s3
+          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
+          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          RCLONE_CONFIG_R2_REGION: auto
+          RCLONE_CONFIG_R2_NO_CHECK_BUCKET: "true"
+          SOURCE_DIR: ${{ steps.rename.outputs.output_dir }}
+        run: |
+          sudo apt-get install -y rclone
+          rclone copy --log-level INFO --checksum "${SOURCE_DIR}" R2:kompassos
