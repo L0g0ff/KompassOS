@@ -30,3 +30,7 @@ sed -i 's/^UID_MIN.*/UID_MIN\t\t\t  1000/' /etc/login.defs
 #   "chcon: can't apply partial context to unlabeled file 'subsys'"
 # Removing (not labeling) is the correct fix. See gh#80
 rm -rf /run/lock/subsys
+
+# Remove Keeper repo dropped by keeperpasswordmanager %post scriptlet.
+# On an immutable system updates run via the image, not this repo.
+rm -f /etc/yum.repos.d/keeper.repo
