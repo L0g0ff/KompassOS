@@ -16,6 +16,7 @@ ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/38
 #ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/f43/default/f43-01-day.jxl
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-3/contents/images/3840x2160.jxl
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-12/contents/images/3840x2160.jxl
+ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-4/contents/images/3840x2160.jxl
 
 # Raise UID_MIN to 1000 so system users (e.g. plasma-setup, UID 968) are not
 # shown in the plasmalogin greeter. Runs last to win over shadow-utils and
