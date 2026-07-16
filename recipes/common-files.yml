@@ -7,6 +7,17 @@ modules:
       - source: system
         destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
 
+  - type: fonts
+    fonts:
+      # CBDT (bitmap) build of Noto Color Emoji. Fedora 43 switched the system
+      # font to COLRv1, which Chrome's Skia engine cannot render (tofu emoji in
+      # the Outlook PWA etc.). Both share the family name "Noto Color Emoji", so
+      # Chrome uses this CBDT variant while other apps keep using COLRv1.
+      # See: https://vadkerti.net/posts/fixing-emoji-fonts-on-fedora-atomic/
+      url-fonts:
+        - name: noto-color-emoji-cbdt
+          url: https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
+
   - type: justfiles
     validate: false
     include:

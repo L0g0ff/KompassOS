@@ -1,0 +1,24 @@
+[Unit]
+Description=One-time fontconfig cache rebuild for the CBDT emoji font fix
+Documentation=https://vadkerti.net/posts/fixing-emoji-fonts-on-fedora-atomic/
+#
+# TEMPORARY (added 2026-07-16). rpm-ostree normalizes all mtimes to epoch 0,
+# so fontconfig never invalidates a stale ~/.cache/fontconfig after an image
+# update. Existing users therefore keep an old cache that lacks the CBDT Noto
+# Color Emoji font, so Chrome still renders tofu. This runs fc-cache -f once
+# per user to rebuild that cache. New installs don't need it (no stale cache).
+#
+# Safe to remove from the image after ~2026-09-16, once existing users have
+# logged in at least once and the refresh has run. Delete this unit, the
+# enable_user_fontcache_refresh.sh script, and its entry in common-scripts.yml.
+#
+ConditionPathExists=!%S/kompassos/fontcache-refreshed
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/fc-cache -f
+ExecStart=/usr/bin/mkdir -p %S/kompassos
+ExecStart=/usr/bin/touch %S/kompassos/fontcache-refreshed
+
+[Install]
+WantedBy=default.target
