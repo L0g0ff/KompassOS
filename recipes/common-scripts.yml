@@ -7,6 +7,7 @@ modules:
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
       - reconfigure_plymouth.sh
+      - rebuild_font_cache.sh
       - set_fix_blurry_wayland_apps.sh
       - set_ssh_unprivileged_ports.sh
 
