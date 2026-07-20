@@ -32,7 +32,6 @@ modules:
     - install_copilot_cli.just
     - install_cups_canon.just
     - install_ipmi_tools.just
-    - install_netextender.just
     - install_vagrant.just
     - remove_bridge_networking.just
     - show_bridge_networking.just
