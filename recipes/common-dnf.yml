@@ -21,6 +21,8 @@ modules:
         - ICAClient
         - powershell
         - winboat
+        - opensnitch
+        - opensnitch-ui
         - https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
     repos:
       cleanup: true
