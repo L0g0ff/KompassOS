@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=sh -c 'sleep 2s; ydotool key 42:0 54:0 29:0 97:0; SHIFT_CHARS="ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%%^&*()_+{}|:~<>?"; count=0; wl-paste | grep -o . | while IFS= read -r char; do if [ $count -ge 256 ]; then break; fi; if echo "$SHIFT_CHARS" | grep -qF "$char"; then ydotool key 42:1; sleep 0.1; ydotool type "$char"; sleep 0.1; ydotool key 42:0; sleep 0.1; else ydotool type "$char"; sleep 0.1; fi; count=$((count + 1)); done'
+Exec=sh -c "sleep 2s; ydotool key 42:0 54:0 29:0 97:0 56:0 100:0 125:0 126:0; wl-paste -n | head -c 256 | ydotool type --key-delay 80 --key-hold 30 --escape 0 --file -"
 Name=Autotype-Clipboard
 Comment=Autotype clipboard
 Icon=input-keyboard
