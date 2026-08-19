@@ -13,6 +13,7 @@ modules:
     repos:
       files:
         - linux-surface.repo
+        - kompassos.repo
 
   - type: script
     scripts:
