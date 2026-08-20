@@ -20,3 +20,15 @@ dnf5 -y remove --exclude=kernel-surface* --exclude=fakeroot* kernel kernel-core 
 
 # Prevent kernel stuff from upgrading again
 dnf5 versionlock add kernel{,-core,-modules,-modules-core,-modules-extra,-tools,-tools-lib,-headers,-devel,-devel-matched}
+
+# Work around iptsd@.service.in shipping StopWhenUnneeded=yes: the unit is only
+# ever activated via udev's SYSTEMD_WANTS (a one-shot job trigger), not a
+# persistent Wants= relation. Systemd then decides nothing "needs" the unit a
+# few seconds after start and stops it, even though the hidraw device is still
+# present - breaking touch/pen until suspend/resume re-triggers udev.
+# See: https://github.com/systemd/systemd/issues/23410
+mkdir -p /usr/lib/systemd/system/iptsd@.service.d
+cat > /usr/lib/systemd/system/iptsd@.service.d/10-stop-when-unneeded.conf <<'EOF'
+[Unit]
+StopWhenUnneeded=no
+EOF
