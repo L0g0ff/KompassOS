@@ -1,12 +1,17 @@
 #!/usr/bin/bash
 set -eoux pipefail
 
-# Pinning the base image alone isn't enough: the dnf installs later in the
-# build (common-dnf.yml) still resolve against the live Fedora repos and
-# silently pull qt6-qtbase back up to whatever is currently published there
-# (6.11.2-2), recreating the exact ABI mismatch with libplasma/plasma-login-
-# manager/plasma-integration/plasma-activities (still 6.7.4-1) that this
-# whole pin was meant to avoid. Lock qt6 to what's already in the pinned
-# base image before any other dnf module runs. Remove once the base image
-# is unpinned (see recipes/recipe-dx-*.yml).
+# Fedora 44 currently ships qt6-qtbase-6.11.2-2 without matching rebuilds of
+# libplasma/plasma-login-manager/plasma-integration/plasma-activities (stuck
+# on 6.7.4-1, built against the older Qt6 ABI). Mixing the two segfaults
+# plasma-login-greeter on login (black screen, compositor cursor still
+# visible). The base image can be internally consistent at pull time, but
+# later dnf installs in this build (common-dnf.yml, e.g. install_opensnitch.sh
+# pulling in a Qt6-dependent package) still resolve against the live Fedora
+# repos and can silently bump qt6-qtbase past what the rest of the image has,
+# recreating the mismatch. Lock qt6 to whatever the base image already has
+# before any other dnf module runs, so later installs can't move it.
+# Remove once Fedora ships a matching libplasma/plasma-login-manager/
+# plasma-integration/plasma-activities release (independent of any
+# image-version pin in recipes/recipe-dx-*.yml).
 dnf5 -y versionlock add 'qt6-*'

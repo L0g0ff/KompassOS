@@ -4,6 +4,9 @@
 modules:
   - type: script
     scripts:
+      # Locks qt6-* to whatever the base image ships, so later dnf installs
+      # can't bump it past the not-yet-rebuilt libplasma/plasma-login-manager
+      # (Fedora 44 ABI gap, see the script for detail). Must run first.
       - versionlock_qt6_pin.sh
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
