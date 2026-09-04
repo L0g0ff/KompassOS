@@ -4,7 +4,6 @@
 modules:
   - type: script
     scripts:
-      - distro_sync.sh
       - disable_service_tailscale.sh
       - enable_user_ydotool.sh
       - reconfigure_plymouth.sh
