@@ -3,7 +3,11 @@
 name: kompassos-dx-hwe
 description: Aurora Developer Experience Hardware Enablement with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx
-image-version: latest
+# Pinned to the last known-good build (2026-08-31) — later builds mix
+# qt6-qtbase-6.11.2-2 with a not-yet-rebuilt libplasma/plasma-login-manager
+# (still 6.7.4-1), causing a segfault in plasma-login-greeter (black screen).
+# Unpin once Fedora ships a matching libplasma/plasma-login-manager release.
+image-version: 44-20260831.2
 
 modules:
   - from-file: common-files.yml
