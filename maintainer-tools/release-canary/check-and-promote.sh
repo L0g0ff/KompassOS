@@ -6,9 +6,10 @@
 # to :latest. Promoting copies the exact digest that has now run for an hour
 # (not whatever :release-candidate currently points at), so a newer RC build
 # landing in the meantime can't get silently promoted instead. Approving
-# also promotes the other 2 variants' build from the same build date (not
-# their current :release-candidate tag, which a scheduled rebuild could
-# have already overwritten) - see .github/workflows/promote.yml.
+# also promotes the other 2 variants' build, verified to be from the same
+# build.yml run as the tested one (by Created timestamp, not their current
+# :release-candidate tag, which a later rebuild could have already
+# overwritten) - see .github/workflows/promote.yml.
 set -euo pipefail
 
 # systemd --user units don't inherit an interactive shell's PATH, so tools
@@ -40,7 +41,7 @@ fi
 touch "$state_file"
 
 if kdialog --title "KompassOS release candidate" \
-    --yesno "$image is running as release-candidate ($digest) and has been up for 1 hour.\n\nPromote to :latest? This also promotes the hwe and surface builds from the same day - they haven't been canary-tested separately yet."; then
+    --yesno "$image is running as release-candidate ($digest) and has been up for 1 hour.\n\nPromote to :latest? This also promotes the hwe and surface builds from the same run - they haven't been canary-tested separately yet."; then
     gh workflow run promote.yml --repo "$REPO" -f "tested_image=$image" -f "tested_digest=$digest"
     kdialog --title "KompassOS release candidate" --passivepopup "Promotion triggered for $image@$digest (+ other variants)" 10
 fi

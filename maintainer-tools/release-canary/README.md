@@ -21,28 +21,37 @@ below.
    newer RC landing in the meantime can't get promoted by accident.
 5. There's currently only a canary machine for the nvidia variant, so
    approving also promotes hwe and surface. Instead of trusting whichever
-   `release-candidate` tag they currently point at (a scheduled rebuild
-   could have already overwritten it - GitHub rebuilds daily even without
-   new commits), the workflow matches them by build date: all 3 variants
-   build in the same matrix run, so they share the
-   `<date>-release-candidate-<os_version>` tag blue-build stamps on each
-   build, which (unlike the bare `release-candidate` tag) isn't overwritten
-   by the next day's rebuild. That tag only has day granularity though, so
-   2 builds on the same day (schedule + a push both landed on 2026-09-05 in
-   practice) would collide on it - the workflow also checks the sibling's
-   actual `Created` timestamp is within 30 minutes of the tested build's,
-   and refuses to promote it otherwise. If one of them failed to build that
-   day, or its date-tagged build turns out to be a different same-day
-   build, its `:latest` is simply left untouched - it doesn't block
-   promoting the ones that did succeed. Once there's a canary per variant,
-   this should take 3 separate tested image/digest pairs instead - see the
-   comment in `promote.yml`.
+   `release-candidate` tag they currently point at (a later rebuild could
+   have already overwritten it - build.yml can run several times a day),
+   the workflow checks each sibling's current `release-candidate` was
+   `Created` within 5 minutes of the tested build - all 3 variants build in
+   the same matrix run and get pushed within seconds of each other, so a
+   close match is a strong signal without needing any of git commit,
+   build date, or GitHub's run history. If a sibling's build failed, or its
+   current tag turns out to be from an unrelated, later build, its
+   `:latest` is simply left untouched - it doesn't block promoting the ones
+   that did succeed. Once there's a canary per variant, this should take 3
+   separate tested image/digest pairs instead - see the comment in
+   `promote.yml`.
 
-   (Earlier version of this matched by git commit instead: broken, because
-   the `org.opencontainers.image.revision` label on these images turns out
-   to be inherited from the *base* image, not set from this repo's own
-   commits - found by actually triggering promotion for real and watching
-   it fail to find a match.)
+   Promotion itself uses `crane tag`, not `skopeo copy`: a registry tag is
+   just a pointer to an existing digest, and crane updates that pointer
+   directly without touching any content. This matters because
+   `release-candidate` is a multi-arch OCI index (an amd64 manifest plus a
+   build attestation) - `skopeo copy --all` was tried first and re-encoded
+   the layers during copy, changing the digest and breaking the signature;
+   `--preserve-digests` was tried next and refused to write the index at
+   all. With `crane tag`, `:latest` ends up as the exact same digest as
+   `release-candidate` (verified: same digest, same index structure, valid
+   `cosign verify`), so they show up grouped together in the registry UI
+   instead of `:latest` sitting there as a separate, unlabelled entry.
+
+   (Two earlier, abandoned approaches are preserved in git history for
+   context: matching by git commit was broken because
+   `org.opencontainers.image.revision` on these images is inherited from
+   the *base* image, not set from this repo's own commits; matching by a
+   `<date>-release-candidate-<os_version>` tag name broke down as soon as 2
+   builds landed on the same day, which happens in practice.)
 6. Other users pulling `:latest` get that build after the workflow finishes.
 
 ## Install (once, on the canary machine)
@@ -70,3 +79,9 @@ correctly over the `systemd --user` D-Bus session, `gh workflow run` fired
 `promote.yml` for real, and the tested nvidia digest was promoted to
 `:latest`. First attempt failed with exit 127 (`gh` not on PATH, see
 above) - fixed and re-verified.
+
+After several more iterations on the sibling-matching logic and the
+`crane tag` switch (see `promote.yml`'s comments and git history), all 3
+variants were promoted together in one run and independently confirmed:
+`:latest` and `:release-candidate` resolve to the identical digest for
+hwe, hwe-nvidia, and surface, and `cosign verify` passes for all three.
