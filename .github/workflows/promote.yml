@@ -48,11 +48,13 @@ jobs:
       # recorded by rpm-ostree on the canary machine - not the OCI index
       # digest that ":release-candidate" itself resolves to (a multi-arch
       # index wrapping that manifest plus a build-attestation). Both are
-      # valid, independently signed refs for the same content; skopeo copy
-      # works fine directly against the inner one.
+      # valid, independently signed refs for the same content. No --all
+      # here on purpose: it's a bare manifest already, and --all is only
+      # relevant (and, per the sibling step below, actively harmful) when
+      # the source is an index.
       - name: Promote the tested image by its exact digest
         run: |
-          skopeo copy --all \
+          skopeo copy \
             "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
             "docker://${{ inputs.tested_image }}:latest"
 
@@ -98,9 +100,20 @@ jobs:
               continue
             fi
 
-            digest=$(skopeo inspect "docker://$image:release-candidate" --format '{{.Digest}}')
+            # release-candidate is a multi-arch OCI index (amd64 manifest +
+            # a build attestation). Resolve to the bare amd64 manifest and
+            # copy that directly, without --all: copying the whole index
+            # with --all was observed to re-encode the layers (a
+            # "io.github.containers.compression.zstd" annotation appeared
+            # that wasn't in the source), producing a different digest than
+            # what was signed - cosign verify then finds no signature for
+            # the copy at all. A bare single-manifest copy doesn't have
+            # this problem (verified: the tested image, promoted the same
+            # way, still verifies).
+            digest=$(skopeo inspect --raw "docker://$image:release-candidate" | \
+              jq -r '.manifests[] | select(.platform.architecture=="amd64" and .platform.os=="linux") | .digest')
             echo "$image: promoting $digest (release-candidate created $sibling_created, ${drift}s from the tested build)"
-            skopeo copy --all "docker://$image@$digest" "docker://$image:latest"
+            skopeo copy "docker://$image@$digest" "docker://$image:latest"
           done
           if [[ "$failed" == "1" ]]; then
             exit 1
