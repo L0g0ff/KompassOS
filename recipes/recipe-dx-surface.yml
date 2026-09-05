@@ -5,6 +5,11 @@ description: Aurora Developer Experience for Microsoft Surface devices with some
 base-image: ghcr.io/ublue-os/aurora-dx
 image-version: latest
 
+# Replaces the default `latest`/timestamp tags with `release-candidate` (see
+# .github/workflows/promote.yml for how a build gets promoted to `latest`).
+alt-tags:
+  - release-candidate
+
 modules:
   - from-file: common-files.yml
 

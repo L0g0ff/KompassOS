@@ -1,0 +1,9 @@
+[Unit]
+Description=Check the booted release-candidate 1 hour after boot
+
+[Timer]
+OnBootSec=1h
+Persistent=false
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=Offer to promote a booted release-candidate to :latest
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/check-and-promote.sh
