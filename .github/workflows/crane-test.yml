@@ -1,0 +1,34 @@
+name: crane-test
+# Temporary, throwaway workflow to verify crane's retag behavior before
+# using it in promote.yml. Delete after use.
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        required: true
+      digest:
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: imjasonh/setup-crane@v0.4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Retag without copying
+        run: |
+          crane tag "${{ inputs.image }}@${{ inputs.digest }}" test-crane-retag
+
+      - name: Show what we got
+        run: |
+          crane digest "${{ inputs.image }}:test-crane-retag"
+          echo "expected: ${{ inputs.digest }}"
