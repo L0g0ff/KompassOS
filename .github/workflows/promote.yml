@@ -47,16 +47,32 @@ jobs:
       # tested_digest is the platform-specific (amd64) manifest digest, as
       # recorded by rpm-ostree on the canary machine - not the OCI index
       # digest that ":release-candidate" itself resolves to (a multi-arch
-      # index wrapping that manifest plus a build-attestation). Both are
-      # valid, independently signed refs for the same content. No --all
-      # here on purpose: it's a bare manifest already, and --all is only
-      # relevant (and, per the sibling step below, actively harmful) when
-      # the source is an index.
+      # index wrapping that manifest plus a build-attestation). If the tag
+      # hasn't moved on since testing, promote the whole index instead of
+      # just the inner manifest, so :latest ends up grouped with
+      # :release-candidate in the registry UI (same digest), not sitting
+      # there as a separate, unlabelled entry. --preserve-digests is
+      # required for this: a plain --all copy of an index was observed to
+      # re-encode the layers (see the sibling step below) and break the
+      # signature; --preserve-digests keeps the bytes, and therefore the
+      # signature, intact. If the tag *has* moved on (a newer build already
+      # replaced it), fall back to promoting just the tested manifest by
+      # itself - still correct, just not grouped.
       - name: Promote the tested image by its exact digest
         run: |
-          skopeo copy \
-            "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
-            "docker://${{ inputs.tested_image }}:latest"
+          index_digest=$(skopeo inspect "docker://${{ inputs.tested_image }}:release-candidate" --format '{{.Digest}}' 2>/dev/null || true)
+          if [[ -n "$index_digest" ]] && skopeo inspect --raw "docker://${{ inputs.tested_image }}@$index_digest" | \
+              jq -e --arg d "${{ inputs.tested_digest }}" 'any(.manifests[]?; .digest == $d)' >/dev/null 2>&1; then
+            echo "release-candidate still matches the tested build - promoting the full index ($index_digest)"
+            skopeo copy --all --preserve-digests \
+              "docker://${{ inputs.tested_image }}@$index_digest" \
+              "docker://${{ inputs.tested_image }}:latest"
+          else
+            echo "release-candidate has moved on since testing - promoting just the tested manifest"
+            skopeo copy \
+              "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
+              "docker://${{ inputs.tested_image }}:latest"
+          fi
 
       - name: Promote the sibling variants, verified by build time
         run: |
@@ -100,20 +116,17 @@ jobs:
               continue
             fi
 
-            # release-candidate is a multi-arch OCI index (amd64 manifest +
-            # a build attestation). Resolve to the bare amd64 manifest and
-            # copy that directly, without --all: copying the whole index
-            # with --all was observed to re-encode the layers (a
+            # Promote the full index (same grouping/--preserve-digests
+            # reasoning as the tested image above): a plain --all copy of
+            # an index was observed to re-encode the layers (a
             # "io.github.containers.compression.zstd" annotation appeared
             # that wasn't in the source), producing a different digest than
-            # what was signed - cosign verify then finds no signature for
-            # the copy at all. A bare single-manifest copy doesn't have
-            # this problem (verified: the tested image, promoted the same
-            # way, still verifies).
-            digest=$(skopeo inspect --raw "docker://$image:release-candidate" | \
-              jq -r '.manifests[] | select(.platform.architecture=="amd64" and .platform.os=="linux") | .digest')
+            # what was signed - cosign verify then found no signature at
+            # all for that copy. --preserve-digests keeps the bytes (and
+            # signature) intact.
+            digest=$(skopeo inspect "docker://$image:release-candidate" --format '{{.Digest}}')
             echo "$image: promoting $digest (release-candidate created $sibling_created, ${drift}s from the tested build)"
-            skopeo copy "docker://$image@$digest" "docker://$image:latest"
+            skopeo copy --all --preserve-digests "docker://$image@$digest" "docker://$image:latest"
           done
           if [[ "$failed" == "1" ]]; then
             exit 1
