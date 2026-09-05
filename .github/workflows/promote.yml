@@ -5,11 +5,13 @@ name: promote-release-candidate
 #
 # Only one variant (currently nvidia) actually gets canary-tested. This
 # workflow promotes that exact tested build to :latest, and also promotes
-# the other 2 variants - but from the *same build.yml run* as the tested
-# one, not whatever their :release-candidate tag currently points at. That
-# distinction matters because build.yml reruns daily (schedule trigger)
-# even without new commits, so ":release-candidate" can have moved on to a
-# newer, completely untested build by the time someone approves promotion.
+# the other 2 variants - but only if their current :release-candidate tag
+# is verified to be from the same build.yml run as the tested one, not
+# whatever it happens to point at right now. That distinction matters
+# because build.yml can run several times a day (schedule trigger, or just
+# pushing repeatedly), so ":release-candidate" can have moved on to a
+# newer, completely untested build - sometimes within minutes - by the time
+# someone approves promotion.
 on:
   workflow_dispatch:
     inputs:
@@ -25,16 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write # to push the new :latest tags
-      actions: read # to read build.yml's run history and job logs below
     env:
-      GH_TOKEN: ${{ github.token }}
-      # The 3 variants this repo builds, as "recipe file:image ref" pairs.
-      # Used to (a) turn tested_image into its recipe's matrix job name and
-      # (b) know which other 2 images/jobs to look up once we've found the
-      # matching run.
-      RECIPE_HWE: "recipe-dx-hwe.yml:ghcr.io/l0g0ff/kompassos-dx-hwe"
-      RECIPE_HWE_NVIDIA: "recipe-dx-hwe-nvidia.yml:ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia"
-      RECIPE_SURFACE: "recipe-dx-surface.yml:ghcr.io/l0g0ff/kompassos-dx-surface"
+      # The 3 variants this repo builds.
+      RECIPE_HWE: "ghcr.io/l0g0ff/kompassos-dx-hwe"
+      RECIPE_HWE_NVIDIA: "ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia"
+      RECIPE_SURFACE: "ghcr.io/l0g0ff/kompassos-dx-surface"
     steps:
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -46,89 +43,65 @@ jobs:
       # No separate "does this digest exist" check: skopeo copy fails with a
       # clear enough error on its own if tested_digest was mistyped or has
       # been garbage-collected.
+      #
+      # tested_digest is the platform-specific (amd64) manifest digest, as
+      # recorded by rpm-ostree on the canary machine - not the OCI index
+      # digest that ":release-candidate" itself resolves to (a multi-arch
+      # index wrapping that manifest plus a build-attestation). Both are
+      # valid, independently signed refs for the same content; skopeo copy
+      # works fine directly against the inner one.
       - name: Promote the tested image by its exact digest
         run: |
           skopeo copy --all \
             "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
             "docker://${{ inputs.tested_image }}:latest"
 
-      - name: Promote the sibling variants from that same build.yml run
+      - name: Promote the sibling variants, verified by build time
         run: |
-          # Every image blue-build pushes carries the git commit it was
-          # built from as an OCI label. That narrows down which build.yml
-          # run(s) to look at, but doesn't uniquely identify one - the
-          # schedule trigger can rerun build.yml for the *same* commit on a
-          # later day (e.g. a Fedora base-image update), producing a
-          # different digest under the same commit. So a commit match alone
-          # isn't proof it's the exact run we want.
-          revision=$(skopeo inspect "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
-            --format '{{ index .Labels "org.opencontainers.image.revision" }}')
-          # Derive which matrix job in that run corresponds to tested_image,
-          # e.g. ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia -> recipe-dx-hwe-nvidia.yml
-          # (build.yml names each matrix job "Build Custom Image (<recipe>)").
-          tested_recipe="recipe-dx-${TESTED_IMAGE##*kompassos-dx-}.yml"
-          echo "Commit $revision, tested recipe $tested_recipe"
+          # Matching by git commit or by scraping a digest out of build.yml's
+          # job logs both turned out to be dead ends (see git history of
+          # this file) - commit doesn't identify one of our builds (that
+          # label is inherited from the base image), and the digest cosign
+          # logs is the index digest, not the inner one rpm-ostree reports,
+          # so they never match as plain strings.
+          #
+          # Instead: all 3 variants build in the same matrix run and get
+          # pushed within seconds of each other, so their Created
+          # timestamps line up tightly. If a sibling's *current*
+          # :release-candidate tag was Created within a few minutes of the
+          # tested build, it's from the same run; if not (a later rebuild
+          # already replaced it, or that variant's build failed and it's
+          # sitting on a stale tag from an earlier day), leave it alone.
+          # skopeo's --format renders .Created via Go's time.Time.String(),
+          # which `date -d` can't parse - go through the JSON output (RFC3339)
+          # instead, via jq.
+          tested_created=$(skopeo inspect "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" | jq -r '.Created')
+          tested_epoch=$(date -d "$tested_created" +%s)
+          echo "Tested build created $tested_created"
 
-          # Walk successful build.yml runs for that commit, newest first,
-          # until we find the one whose tested-variant job actually pushed
-          # our exact tested_digest. blue-build's action doesn't expose the
-          # pushed digest as a job output, but cosign logs it as
-          # "docker-manifest-digest" while signing, so we grep the raw job
-          # log for it instead. This is scraping a log line rather than a
-          # documented API - if blue-build/cosign ever change that output
-          # format, this step starts failing loudly (not silently).
-          run_id=""
-          for candidate in $(gh run list --workflow=build.yml --limit 50 \
-              --json databaseId,headSha,conclusion \
-              -q ".[] | select(.headSha==\"$revision\" and .conclusion==\"success\") | .databaseId"); do
-            job_id=$(gh run view "$candidate" --json jobs \
-              -q ".jobs[] | select(.name==\"Build Custom Image (${tested_recipe})\") | .databaseId")
-            [[ -z "$job_id" ]] && continue
-            if gh run view --job "$job_id" --log 2>/dev/null | \
-                grep -q "\"docker-manifest-digest\":\"${{ inputs.tested_digest }}\""; then
-              run_id="$candidate"
-              break
-            fi
-          done
-          if [[ -z "$run_id" ]]; then
-            echo "::error::Could not find the build.yml run that produced ${{ inputs.tested_digest }} for $revision"
-            exit 1
-          fi
-          echo "Found run: $run_id"
-
-          # Now that we know the exact run, read the other 2 variants'
-          # pushed digest straight from their job in that same run (same
-          # log-scraping trick) and promote each by digest - not by copying
-          # their current :release-candidate tag, which could point
-          # somewhere else entirely by now.
           failed=0
-          for entry in "$RECIPE_HWE" "$RECIPE_HWE_NVIDIA" "$RECIPE_SURFACE"; do
-            recipe="${entry%%:*}"
-            image="${entry##*:}"
+          for image in "$RECIPE_HWE" "$RECIPE_HWE_NVIDIA" "$RECIPE_SURFACE"; do
             [[ "$image" == "${{ inputs.tested_image }}" ]] && continue # already promoted above
 
-            job_id=$(gh run view "$run_id" --json jobs \
-              -q ".jobs[] | select(.name==\"Build Custom Image (${recipe})\") | .databaseId")
-            # If job_id is empty (job missing from this run), the gh/grep
-            # below just yield an empty digest too - one check covers both
-            # "no such job" and "job ran but never pushed" (e.g. it failed).
-            digest=$(gh run view --job "$job_id" --log 2>/dev/null | \
-              grep -o '"docker-manifest-digest":"sha256:[a-f0-9]*"' | head -n1 | grep -o 'sha256:[a-f0-9]*')
-            if [[ -z "$digest" ]]; then
-              # Deliberately don't abort the whole promotion for this: if
-              # e.g. surface failed to build, hwe/nvidia should still get
-              # promoted. We just leave this one image's :latest untouched
-              # and fail the job afterwards so it's visible in the Actions UI.
-              echo "::error::$image: no successful build for $recipe in run $run_id, leaving :latest untouched"
+            sibling_created=$(skopeo inspect "docker://$image:release-candidate" 2>/dev/null | jq -r '.Created')
+            if [[ -z "$sibling_created" ]]; then
+              echo "::error::$image: no release-candidate tag found, leaving :latest untouched"
               failed=1
               continue
             fi
 
-            echo "$image: promoting $digest (same run as the tested build)"
+            drift=$(( $(date -d "$sibling_created" +%s) - tested_epoch ))
+            drift=${drift#-}
+            if (( drift > 300 )); then
+              echo "::error::$image: current release-candidate (created $sibling_created) is ${drift}s away from the tested build ($tested_created) - probably a different, unrelated build, leaving :latest untouched"
+              failed=1
+              continue
+            fi
+
+            digest=$(skopeo inspect "docker://$image:release-candidate" --format '{{.Digest}}')
+            echo "$image: promoting $digest (release-candidate created $sibling_created, ${drift}s from the tested build)"
             skopeo copy --all "docker://$image@$digest" "docker://$image:latest"
           done
           if [[ "$failed" == "1" ]]; then
             exit 1
           fi
-        env:
-          TESTED_IMAGE: ${{ inputs.tested_image }}
