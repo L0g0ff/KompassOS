@@ -33,6 +33,8 @@ jobs:
       RECIPE_HWE_NVIDIA: "ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia"
       RECIPE_SURFACE: "ghcr.io/l0g0ff/kompassos-dx-surface"
     steps:
+      - uses: imjasonh/setup-crane@v0.4
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -40,23 +42,44 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # No separate "does this digest exist" check: skopeo copy fails with a
+      # :latest is tagged with `crane tag`, not `skopeo copy`: a tag is
+      # just a pointer to an existing digest, and crane updates that
+      # pointer directly without re-uploading or re-encoding anything.
+      # skopeo copy --all was tried first and re-encoded the layers when
+      # the source was a multi-arch index (an unexpected zstd compression
+      # annotation appeared that wasn't in the source), which changed the
+      # digest and broke the signature - cosign verify found nothing.
+      # skopeo copy --all --preserve-digests was tried next and refused to
+      # write the index at all ("Instructed to preserve digests"). crane
+      # tag has neither problem - verified against the real registry
+      # before adopting it here: digest, index structure, and signature
+      # all come out identical to the source.
+      #
+      # No separate "does this digest exist" check: crane tag fails with a
       # clear enough error on its own if tested_digest was mistyped or has
       # been garbage-collected.
       #
       # tested_digest is the platform-specific (amd64) manifest digest, as
       # recorded by rpm-ostree on the canary machine - not the OCI index
       # digest that ":release-candidate" itself resolves to (a multi-arch
-      # index wrapping that manifest plus a build-attestation). Both are
-      # valid, independently signed refs for the same content. No --all
-      # here on purpose: it's a bare manifest already, and --all is only
-      # relevant (and, per the sibling step below, actively harmful) when
-      # the source is an index.
+      # index wrapping that manifest plus a build-attestation). If the tag
+      # hasn't moved on since testing, tag the whole index as :latest so
+      # it's grouped with :release-candidate in the registry UI (same
+      # digest), not sitting there as a separate, unlabelled entry. If the
+      # tag *has* moved on (a newer build already replaced it), fall back
+      # to tagging just the tested manifest by itself - still correct,
+      # just not grouped.
       - name: Promote the tested image by its exact digest
         run: |
-          skopeo copy \
-            "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" \
-            "docker://${{ inputs.tested_image }}:latest"
+          index_digest=$(crane digest "${{ inputs.tested_image }}:release-candidate" 2>/dev/null || true)
+          if [[ -n "$index_digest" ]] && crane manifest "${{ inputs.tested_image }}@$index_digest" | \
+              jq -e --arg d "${{ inputs.tested_digest }}" 'any(.manifests[]?; .digest == $d)' >/dev/null 2>&1; then
+            echo "release-candidate still matches the tested build - tagging the full index ($index_digest) as latest"
+            crane tag "${{ inputs.tested_image }}@$index_digest" latest
+          else
+            echo "release-candidate has moved on since testing - tagging just the tested manifest as latest"
+            crane tag "${{ inputs.tested_image }}@${{ inputs.tested_digest }}" latest
+          fi
 
       - name: Promote the sibling variants, verified by build time
         run: |
@@ -100,20 +123,9 @@ jobs:
               continue
             fi
 
-            # release-candidate is a multi-arch OCI index (amd64 manifest +
-            # a build attestation). Resolve to the bare amd64 manifest and
-            # copy that directly, without --all: copying the whole index
-            # with --all was observed to re-encode the layers (a
-            # "io.github.containers.compression.zstd" annotation appeared
-            # that wasn't in the source), producing a different digest than
-            # what was signed - cosign verify then finds no signature for
-            # the copy at all. A bare single-manifest copy doesn't have
-            # this problem (verified: the tested image, promoted the same
-            # way, still verifies).
-            digest=$(skopeo inspect --raw "docker://$image:release-candidate" | \
-              jq -r '.manifests[] | select(.platform.architecture=="amd64" and .platform.os=="linux") | .digest')
-            echo "$image: promoting $digest (release-candidate created $sibling_created, ${drift}s from the tested build)"
-            skopeo copy "docker://$image@$digest" "docker://$image:latest"
+            digest=$(crane digest "$image:release-candidate")
+            echo "$image: tagging $digest as latest (release-candidate created $sibling_created, ${drift}s from the tested build)"
+            crane tag "$image@$digest" latest
           done
           if [[ "$failed" == "1" ]]; then
             exit 1
