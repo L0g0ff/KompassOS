@@ -14,16 +14,16 @@ fix-uid:
     echo "${yellow}KompassOS UID Fix${normal}"
     echo ""
 
-    if getent passwd $new_uid > /dev/null 2>&1; then
-        existing=$(getent passwd $new_uid | cut -d: -f1)
-        echo "${red}UID $new_uid is already in use by '$existing', aborting.${normal}"
-        exit 1
-    fi
-
     current_uid=$(id -u $username)
     if [ "$current_uid" -eq "$new_uid" ]; then
         echo "${green}$username already has UID $new_uid, nothing to do.${normal}"
         exit 0
+    fi
+
+    if getent passwd $new_uid > /dev/null 2>&1; then
+        existing=$(getent passwd $new_uid | cut -d: -f1)
+        echo "${red}UID $new_uid is already in use by '$existing', aborting.${normal}"
+        exit 1
     fi
 
     echo "Current UID of ${blue}$username${normal}: ${red}$current_uid${normal}"
