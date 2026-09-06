@@ -116,10 +116,12 @@ For detailed instructions on creating a bootable USB or troubleshooting boot iss
 
 ## Verification
 
-These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify the signature by downloading the `cosign.pub` file from this repo and running the following command:
+These images are signed with [Sigstore](https://www.sigstore.dev/)'s [cosign](https://github.com/sigstore/cosign). You can verify each variant with the `cosign.pub` file from this repository:
 
 ```bash
-cosign verify --key cosign.pub ghcr.io/l0g0ff/kompassos
+cosign verify --key cosign.pub ghcr.io/l0g0ff/kompassos-dx-hwe:latest
+cosign verify --key cosign.pub ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia:latest
+cosign verify --key cosign.pub ghcr.io/l0g0ff/kompassos-dx-surface:latest
 ```
 
 ## Contribution
