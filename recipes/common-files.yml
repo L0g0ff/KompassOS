@@ -19,7 +19,7 @@ modules:
           url: https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
 
   - type: justfiles
-    validate: false
+    validate: true
     include:
     - activate_webcam.just
     - kill_citrix.just
