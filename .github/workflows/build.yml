@@ -9,6 +9,8 @@ on:
       - "**.md"
 
   pull_request:
+    paths-ignore: # don't build images for documentation-only PRs
+      - "**.md"
   workflow_dispatch: # allow manually triggering builds
 concurrency:
   # only run one build at a time
@@ -43,6 +45,25 @@ jobs:
     steps:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
+        id: build
+        continue-on-error: true
+        uses: blue-build/github-action@v1.12
+        with:
+          recipe: ${{ matrix.recipe }}
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+
+          # enabled by default, disable if your image is small and you want faster builds
+          maximize_build_space: true
+          rechunk: false # re-chunk the final image to be more efficient for distribution, disable if you want faster builds and don't care about distribution size
+
+      - name: Wait before retrying failed build
+        if: steps.build.outcome == 'failure'
+        run: sleep 120
+
+      - name: Retry Build Custom Image
+        if: steps.build.outcome == 'failure'
         uses: blue-build/github-action@v1.12
         with:
           recipe: ${{ matrix.recipe }}
