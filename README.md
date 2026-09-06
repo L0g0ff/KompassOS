@@ -50,7 +50,7 @@ To rebase an existing atomic Fedora installation to the latest build:
   systemctl reboot
   ```
 
-The `latest` tag only moves after a build has run as a `release-candidate` and been manually promoted (see `maintainer-tools/release-canary/`) - it does not update on every build. Once it does move, it will still always use the Fedora version specified in `recipe.yml`, so you won't get accidentally updated to the next major version.
+The `latest` tag only moves after a build has run as a `release-candidate` and been manually promoted (see `maintainer-tools/release-canary/`) - it does not update on every build. Base-image streams such as `stable` and `latest` can still advance to a newer Fedora release, so release candidates should be verified before promotion.
 
 ## Dev Branch — Testing Only
 
