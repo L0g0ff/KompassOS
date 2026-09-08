@@ -50,7 +50,7 @@ To rebase an existing atomic Fedora installation to the latest build:
   systemctl reboot
   ```
 
-The `latest` tag only moves after a build has run as a `release-candidate` and been manually promoted (see `maintainer-tools/release-canary/`) - it does not update on every build. Base-image streams such as `stable` and `latest` can still advance to a newer Fedora release, so release candidates should be verified before promotion.
+The `latest` tag only moves after that variant's `release-candidate` has passed the external Ansible acceptance pipeline. HWE, Nvidia, and Surface are tested and promoted independently through `.github/workflows/promote.yml`; a successful image build alone never publishes `latest`. Base-image streams such as `stable` and `latest` can still advance to a newer Fedora release, so release candidates are always verified before promotion.
 
 ## Dev Branch — Testing Only
 
