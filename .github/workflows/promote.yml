@@ -1,37 +1,27 @@
 name: promote-release-candidate
-# Triggered manually (via gh workflow run) by a maintainer's release-canary
-# script once a release-candidate build has run for an hour and been
-# manually approved. See maintainer-tools/release-canary/ for that side.
-#
-# Only one variant (currently nvidia) actually gets canary-tested. This
-# workflow promotes that exact tested build to :latest, and also promotes
-# the other 2 variants - but only if their current :release-candidate tag
-# is verified to be from the same build.yml run as the tested one, not
-# whatever it happens to point at right now. That distinction matters
-# because build.yml can run several times a day (schedule trigger, or just
-# pushing repeatedly), so ":release-candidate" can have moved on to a
-# newer, completely untested build - sometimes within minutes - by the time
-# someone approves promotion.
+# Called by the external Ansible acceptance pipeline after one image variant
+# has passed its own upgrade, reboot, and desktop-login checks.
 on:
   workflow_dispatch:
     inputs:
-      tested_image:
-        description: "Image ref without tag that was actually canary-tested, e.g. ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia"
+      variant:
+        description: "Independently tested image variant"
         required: true
+        type: choice
+        options:
+          - hwe
+          - nvidia
+          - surface
       tested_digest:
-        description: "Manifest digest of the booted release-candidate that was tested, e.g. sha256:..."
+        description: "Manifest digest booted by the tested VM, e.g. sha256:..."
         required: true
+        type: string
 
 jobs:
   promote:
     runs-on: ubuntu-latest
     permissions:
-      packages: write # to push the new :latest tags
-    env:
-      # The 3 variants this repo builds.
-      RECIPE_HWE: "ghcr.io/l0g0ff/kompassos-dx-hwe"
-      RECIPE_HWE_NVIDIA: "ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia"
-      RECIPE_SURFACE: "ghcr.io/l0g0ff/kompassos-dx-surface"
+      packages: write
     steps:
       - uses: imjasonh/setup-crane@v0.7
 
@@ -42,91 +32,43 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # :latest is tagged with `crane tag`, not `skopeo copy`: a tag is
-      # just a pointer to an existing digest, and crane updates that
-      # pointer directly without re-uploading or re-encoding anything.
-      # skopeo copy --all was tried first and re-encoded the layers when
-      # the source was a multi-arch index (an unexpected zstd compression
-      # annotation appeared that wasn't in the source), which changed the
-      # digest and broke the signature - cosign verify found nothing.
-      # skopeo copy --all --preserve-digests was tried next and refused to
-      # write the index at all ("Instructed to preserve digests"). crane
-      # tag has neither problem - verified against the real registry
-      # before adopting it here: digest, index structure, and signature
-      # all come out identical to the source.
-      #
-      # No separate "does this digest exist" check: crane tag fails with a
-      # clear enough error on its own if tested_digest was mistyped or has
-      # been garbage-collected.
-      #
-      # tested_digest is the platform-specific (amd64) manifest digest, as
-      # recorded by rpm-ostree on the canary machine - not the OCI index
-      # digest that ":release-candidate" itself resolves to (a multi-arch
-      # index wrapping that manifest plus a build-attestation). If the tag
-      # hasn't moved on since testing, tag the whole index as :latest so
-      # it's grouped with :release-candidate in the registry UI (same
-      # digest), not sitting there as a separate, unlabelled entry. If the
-      # tag *has* moved on (a newer build already replaced it), fall back
-      # to tagging just the tested manifest by itself - still correct,
-      # just not grouped.
-      - name: Promote the tested image by its exact digest
+      - name: Select image
+        id: image
+        env:
+          VARIANT: ${{ inputs.variant }}
+          TESTED_DIGEST: ${{ inputs.tested_digest }}
         run: |
-          index_digest=$(crane digest "${{ inputs.tested_image }}:release-candidate" 2>/dev/null || true)
-          if [[ -n "$index_digest" ]] && crane manifest "${{ inputs.tested_image }}@$index_digest" | \
-              jq -e --arg d "${{ inputs.tested_digest }}" 'any(.manifests[]?; .digest == $d)' >/dev/null 2>&1; then
-            echo "release-candidate still matches the tested build - tagging the full index ($index_digest) as latest"
-            crane tag "${{ inputs.tested_image }}@$index_digest" latest
-          else
-            echo "release-candidate has moved on since testing - tagging just the tested manifest as latest"
-            crane tag "${{ inputs.tested_image }}@${{ inputs.tested_digest }}" latest
-          fi
-
-      - name: Promote the sibling variants, verified by build time
-        run: |
-          # Matching by git commit or by scraping a digest out of build.yml's
-          # job logs both turned out to be dead ends (see git history of
-          # this file) - commit doesn't identify one of our builds (that
-          # label is inherited from the base image), and the digest cosign
-          # logs is the index digest, not the inner one rpm-ostree reports,
-          # so they never match as plain strings.
-          #
-          # Instead: all 3 variants build in the same matrix run and get
-          # pushed within seconds of each other, so their Created
-          # timestamps line up tightly. If a sibling's *current*
-          # :release-candidate tag was Created within a few minutes of the
-          # tested build, it's from the same run; if not (a later rebuild
-          # already replaced it, or that variant's build failed and it's
-          # sitting on a stale tag from an earlier day), leave it alone.
-          # skopeo's --format renders .Created via Go's time.Time.String(),
-          # which `date -d` can't parse - go through the JSON output (RFC3339)
-          # instead, via jq.
-          tested_created=$(skopeo inspect "docker://${{ inputs.tested_image }}@${{ inputs.tested_digest }}" | jq -r '.Created')
-          tested_epoch=$(date -d "$tested_created" +%s)
-          echo "Tested build created $tested_created"
-
-          failed=0
-          for image in "$RECIPE_HWE" "$RECIPE_HWE_NVIDIA" "$RECIPE_SURFACE"; do
-            [[ "$image" == "${{ inputs.tested_image }}" ]] && continue # already promoted above
-
-            sibling_created=$(skopeo inspect "docker://$image:release-candidate" 2>/dev/null | jq -r '.Created')
-            if [[ -z "$sibling_created" ]]; then
-              echo "::error::$image: no release-candidate tag found, leaving :latest untouched"
-              failed=1
-              continue
-            fi
-
-            drift=$(( $(date -d "$sibling_created" +%s) - tested_epoch ))
-            drift=${drift#-}
-            if (( drift > 300 )); then
-              echo "::error::$image: current release-candidate (created $sibling_created) is ${drift}s away from the tested build ($tested_created) - probably a different, unrelated build, leaving :latest untouched"
-              failed=1
-              continue
-            fi
-
-            digest=$(crane digest "$image:release-candidate")
-            echo "$image: tagging $digest as latest (release-candidate created $sibling_created, ${drift}s from the tested build)"
-            crane tag "$image@$digest" latest
-          done
-          if [[ "$failed" == "1" ]]; then
+          case "$VARIANT" in
+            hwe) image=ghcr.io/l0g0ff/kompassos-dx-hwe ;;
+            nvidia) image=ghcr.io/l0g0ff/kompassos-dx-hwe-nvidia ;;
+            surface) image=ghcr.io/l0g0ff/kompassos-dx-surface ;;
+            *) echo "::error::Unknown variant: $VARIANT"; exit 1 ;;
+          esac
+          [[ "$TESTED_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+            echo "::error::Invalid tested digest"
             exit 1
+          }
+          echo "name=$image" >> "$GITHUB_OUTPUT"
+
+      # rpm-ostree reports the platform manifest digest, while the
+      # release-candidate tag normally points at an OCI index containing that
+      # manifest plus its attestation. Preserve the full index when it still
+      # contains the tested digest; otherwise promote only the exact manifest
+      # that Ansible tested, never a newer release-candidate by accident.
+      - name: Promote exact tested image to latest
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}
+          TESTED_DIGEST: ${{ inputs.tested_digest }}
+        run: |
+          index_digest=$(crane digest "$IMAGE:release-candidate" 2>/dev/null || true)
+          if [[ -n "$index_digest" ]] && crane manifest "$IMAGE@$index_digest" |
+              jq -e --arg digest "$TESTED_DIGEST" \
+                'any(.manifests[]?; .digest == $digest)' >/dev/null; then
+            promoted_digest=$index_digest
+          else
+            promoted_digest=$TESTED_DIGEST
           fi
+
+          crane tag "$IMAGE@$promoted_digest" latest
+          [[ "$(crane digest "$IMAGE:latest")" == "$promoted_digest" ]]
+          echo "$IMAGE@$promoted_digest promoted to :latest"
