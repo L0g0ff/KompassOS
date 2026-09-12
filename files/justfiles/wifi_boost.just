@@ -6,6 +6,7 @@ wifi-boost-on:
     #!/usr/bin/env bash
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
+    source /usr/lib/ujust/libwifiboost.sh
 
     echo "${yellow}WiFi Power Boost${normal}"
     echo ""
@@ -20,27 +21,14 @@ wifi-boost-on:
 
     echo ""
 
-    # Detect WiFi interface
-    mapfile -t IFACES < <(iw dev | awk '/Interface/ {print $2}')
-    COUNT=${#IFACES[@]}
-    if [ "$COUNT" -eq 0 ]; then
-        echo "${red}No WiFi adapter found.${normal}"; exit 1
-    elif [ "$COUNT" -gt 1 ]; then
-        IFACE=$(printf '%s\n' "${IFACES[@]}" | gum choose --header "Select WiFi adapter:")
-    else
-        IFACE="${IFACES[0]}"
-    fi
-
-    PHY=$(iw dev "$IFACE" info | awk '/wiphy/ {print "phy" $2}')
-    PHY_SECTION="phy#${PHY#phy}"
+    IFACE=$(wifi_pick_iface) || exit 1
+    PHY=$(wifi_get_phy "$IFACE")
     echo "Adapter: ${blue}${IFACE}${normal} (${PHY})"
     echo ""
 
     # Snapshot before
     BEFORE_POWER=$(iw dev "$IFACE" info | awk '/txpower/ {print $2, $3}')
-    BEFORE_REG=$(iw reg get | awk "/^${PHY_SECTION}$/{f=1;next} /^(phy#|global)/{f=0} f && /^country /{gsub(/:/, \"\", \$2); print \$2; exit}")
-    [ -z "$BEFORE_REG" ] && BEFORE_REG=$(iw reg get | awk '/^global$/{f=1;next} /^phy#/{f=0} f && /^country /{gsub(/:/, "", $2); print $2; exit}')
-    BEFORE_REG="${BEFORE_REG:-unknown}"
+    BEFORE_REG=$(wifi_get_regdomain "$PHY")
 
     # Save for restore
     echo "$BEFORE_REG" | sudo tee /tmp/wifi-boost-orig-reg > /dev/null
@@ -68,9 +56,7 @@ wifi-boost-on:
 
     # Snapshot after
     AFTER_POWER=$(iw dev "$IFACE" info | awk '/txpower/ {print $2, $3}')
-    AFTER_REG=$(iw reg get | awk "/^${PHY_SECTION}$/{f=1;next} /^(phy#|global)/{f=0} f && /^country /{gsub(/:/, \"\", \$2); print \$2; exit}")
-    [ -z "$AFTER_REG" ] && AFTER_REG=$(iw reg get | awk '/^global$/{f=1;next} /^phy#/{f=0} f && /^country /{gsub(/:/, "", $2); print $2; exit}')
-    AFTER_REG="${AFTER_REG:-unknown}"
+    AFTER_REG=$(wifi_get_regdomain "$PHY")
     POWER_SAVE=$(iw dev "$IFACE" get power_save 2>/dev/null | awk '{print $NF}' || echo "unknown")
 
     echo "${green}✓ Boost applied${normal}"
@@ -100,6 +86,7 @@ wifi-boost-off:
     #!/usr/bin/env bash
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
+    source /usr/lib/ujust/libwifiboost.sh
 
     echo "${yellow}WiFi Power Boost — Restore${normal}"
     echo ""
@@ -107,18 +94,10 @@ wifi-boost-off:
     # Use saved interface or detect
     if [ -f /tmp/wifi-boost-iface ]; then
         IFACE=$(cat /tmp/wifi-boost-iface)
-        PHY=$(cat /tmp/wifi-boost-orig-phy 2>/dev/null || iw dev "$IFACE" info | awk '/wiphy/ {print "phy" $2}')
+        PHY=$(cat /tmp/wifi-boost-orig-phy 2>/dev/null || wifi_get_phy "$IFACE")
     else
-        mapfile -t IFACES < <(iw dev | awk '/Interface/ {print $2}')
-        COUNT=${#IFACES[@]}
-        if [ "$COUNT" -eq 0 ]; then
-            echo "${red}No WiFi adapter found.${normal}"; exit 1
-        elif [ "$COUNT" -gt 1 ]; then
-            IFACE=$(printf '%s\n' "${IFACES[@]}" | gum choose --header "Select WiFi adapter:")
-        else
-            IFACE="${IFACES[0]}"
-        fi
-        PHY=$(iw dev "$IFACE" info | awk '/wiphy/ {print "phy" $2}')
+        IFACE=$(wifi_pick_iface) || exit 1
+        PHY=$(wifi_get_phy "$IFACE")
     fi
 
     echo "Adapter: ${blue}${IFACE}${normal} (${PHY})"
@@ -155,27 +134,16 @@ wifi-boost-off:
 wifi-boost-status:
     #!/usr/bin/env bash
     source /usr/lib/ujust/ujust.sh
+    source /usr/lib/ujust/libwifiboost.sh
 
     echo "${bold}WiFi Power Status${normal}"
     echo ""
 
-    mapfile -t IFACES < <(iw dev | awk '/Interface/ {print $2}')
-    COUNT=${#IFACES[@]}
-    if [ "$COUNT" -eq 0 ]; then
-        echo "${red}No WiFi adapter found.${normal}"; exit 1
-    elif [ "$COUNT" -gt 1 ]; then
-        IFACE=$(printf '%s\n' "${IFACES[@]}" | gum choose --header "Select WiFi adapter:")
-    else
-        IFACE="${IFACES[0]}"
-    fi
-
-    PHY=$(iw dev "$IFACE" info | awk '/wiphy/ {print "phy" $2}')
-    PHY_SECTION="phy#${PHY#phy}"
+    IFACE=$(wifi_pick_iface) || exit 1
+    PHY=$(wifi_get_phy "$IFACE")
     CURRENT_POWER=$(iw dev "$IFACE" info | awk '/txpower/ {print $2, $3}')
     POWER_SAVE=$(iw dev "$IFACE" get power_save 2>/dev/null | awk '{print $NF}' || echo "unknown")
-    REG=$(iw reg get | awk "/^${PHY_SECTION}$/{f=1;next} /^(phy#|global)/{f=0} f && /^country /{gsub(/:/, \"\", \$2); print \$2; exit}")
-    [ -z "$REG" ] && REG=$(iw reg get | awk '/^global$/{f=1;next} /^phy#/{f=0} f && /^country /{gsub(/:/, "", $2); print $2; exit}')
-    REG="${REG:-unknown}"
+    REG=$(wifi_get_regdomain "$PHY")
 
     if [ -f /tmp/wifi-boost-iface ]; then
         BOOST_STATUS="${green}active${normal}"
