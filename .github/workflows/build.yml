@@ -20,23 +20,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
   cancel-in-progress: true
 jobs:
-  generate-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Set build matrix
-        id: set-matrix
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-            echo 'matrix={"recipe":["recipe-dx-hwe-nvidia.yml"]}' >> $GITHUB_OUTPUT
-          else
-            echo 'matrix={"recipe":["recipe-dx-hwe.yml","recipe-dx-hwe-nvidia.yml","recipe-dx-surface.yml"]}' >> $GITHUB_OUTPUT
-          fi
-
   bluebuild:
     name: Build Custom Image
-    needs: generate-matrix
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,7 +29,8 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false # stop GH from cancelling all matrix builds if one fails
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      matrix:
+        recipe: ${{ fromJSON(github.ref == 'refs/heads/dev' && '["recipe-dx-hwe-nvidia.yml"]' || '["recipe-dx-hwe.yml","recipe-dx-hwe-nvidia.yml","recipe-dx-surface.yml"]') }}
     steps:
       # the build is fully handled by the reusable github action
       - name: Build Custom Image
