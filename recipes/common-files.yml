@@ -16,7 +16,7 @@ modules:
       # See: https://vadkerti.net/posts/fixing-emoji-fonts-on-fedora-atomic/
       url-fonts:
         - name: noto-color-emoji-cbdt
-          url: https://github.com/googlefonts/noto-emoji/raw/main/fonts/NotoColorEmoji.ttf
+          url: https://github.com/googlefonts/noto-emoji/raw/main/2D/fonts/NotoColorEmoji.ttf
 
   - type: justfiles
     validate: false
