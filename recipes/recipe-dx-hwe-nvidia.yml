@@ -3,7 +3,12 @@
 name: kompassos-dx-hwe-nvidia
 description: Aurora Developer Experience Nvidia Hardware with some extra gravy.
 base-image: ghcr.io/ublue-os/aurora-dx-nvidia-open
-image-version: stable
+# Pinned to the last known-good Aurora stable build (kernel 7.2.7). Stable
+# 44.20261103.1 ships kernel 7.2.11, which half-backports the CS35L56 OT25 DAI
+# series ("CODEC DAI cs35l56-ot25 not registered"): no sound card at all on
+# SoundWire/CS35L56 laptops. Unpin once Aurora stable ships kernel >= 7.2.12.
+# Tag carries quay.expires-after=4w, so keep this temporary. See issue #109.
+image-version: stable-44.20261027.1
 
 # Replaces the default `latest`/timestamp tags with `release-candidate` (see
 # .github/workflows/promote.yml for how a build gets promoted to `latest`).
