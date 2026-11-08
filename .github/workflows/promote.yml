@@ -71,5 +71,10 @@ jobs:
           fi
 
           crane tag "$IMAGE@$promoted_digest" latest
+          # GHCR can briefly serve the previous tag digest right after a write.
+          for _ in 1 2 3 4 5; do
+            [[ "$(crane digest "$IMAGE:latest")" == "$promoted_digest" ]] && break
+            sleep 3
+          done
           [[ "$(crane digest "$IMAGE:latest")" == "$promoted_digest" ]]
           echo "$IMAGE@$promoted_digest promoted to :latest"
