@@ -13,13 +13,11 @@ alt-tags:
 modules:
   - from-file: common-files.yml
 
-  # Surface install needs both repos before common-dnf.yml runs:
-  # linux-surface provides the kernel; kompassos provides Fedora-compatible libwacom.
+  # The Surface packages must be available before common-dnf.yml runs.
   - type: dnf
     repos:
       files:
         - linux-surface.repo
-        - kompassos.repo
 
   - type: script
     scripts:
