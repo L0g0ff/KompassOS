@@ -26,7 +26,7 @@ generate-iso-kompassos-dx-hwe:
         IMAGE_NAME=kompassos-dx-hwe \
         IMAGE_REPO=ghcr.io/l0g0ff \
         IMAGE_TAG=latest \
-        VERSION=44
+        VERSION=45
     echo "ISO generated successfully in ~/iso/"
 
 # Generate ISO for KompassOS DX HWE Nvidia
@@ -55,7 +55,7 @@ generate-iso-kompassos-dx-hwe-nvidia:
         IMAGE_NAME=kompassos-dx-hwe-nvidia \
         IMAGE_REPO=ghcr.io/l0g0ff \
         IMAGE_TAG=latest \
-        VERSION=44
+        VERSION=45
     echo "ISO generated successfully in ~/iso/"
 
 # Generate ISO for KompassOS DX Surface
@@ -84,7 +84,7 @@ generate-iso-kompassos-dx-surface:
         IMAGE_NAME=kompassos-dx-surface \
         IMAGE_REPO=ghcr.io/l0g0ff \
         IMAGE_TAG=latest \
-        VERSION=44
+        VERSION=45
     echo "ISO generated successfully in ~/iso/"
 
 # Install and validate an ISO in a local KVM VM
@@ -136,7 +136,7 @@ test-iso iso='':
     sudo cp --reflink=auto "/proc/$$/fd/$iso_fd" "$staged_iso"
 
     cat > "$work/ks.cfg" <<'KS'
-    #version=F44
+    #version=F45
     text
     eula --agreed
     lang en_US.UTF-8
