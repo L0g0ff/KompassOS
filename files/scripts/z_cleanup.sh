@@ -12,11 +12,11 @@ ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/38
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default.jxl
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default-dark.png
 ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/default-dark.jxl
-#ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/f43/default/f43-01-night.jxl
-#ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/f43/default/f43-01-day.jxl
-ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-3/contents/images/3840x2160.jxl
-ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-12/contents/images/3840x2160.jxl
-ln -sf /usr/share/backgrounds/kompassos/kompassos-wallpaper-1/contents/images/3840x2160.png /usr/share/backgrounds/aurora/aurora-wallpaper-4/contents/images/3840x2160.jxl
+# The plasma-login greeter and the lockscreen use /usr/share/wallpapers/Aurora/
+# (kde-settings-plasmalogin defaults.conf, kscreenlockerrc). Aurora retargets
+# that link to a different aurora-wallpaper-N per release (F45: -6), so point
+# the whole package to ours instead of overriding individual wallpapers.
+ln -sfn ../backgrounds/kompassos/kompassos-wallpaper-1 /usr/share/wallpapers/Aurora
 
 # Raise UID_MIN to 1000 so system users (e.g. plasma-setup, UID 968) are not
 # shown in the plasmalogin greeter. Runs last to win over shadow-utils and
