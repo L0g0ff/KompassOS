@@ -7,9 +7,11 @@ base-image: ghcr.io/ublue-os/aurora-dx
 # 45.20261113.1 still ships kernel 7.2.11, which half-backports the CS35L56
 # OT25 DAI series ("CODEC DAI cs35l56-ot25 not registered"): no sound card at
 # all on SoundWire/CS35L56 laptops. Switch back to `stable` once Aurora stable
-# ships kernel >= 7.2.12. Tag carries quay.expires-after=4w (~2026-12-13), so
+# ships kernel >= 7.2.12. Tag carries quay.expires-after=4w (~2026-12-14), so
 # keep this temporary. See issue #109.
-image-version: latest-45.20261115.3
+# Not 45.20261115.3: that build ships kate 26.08.3 against KF6 6.31 (kate
+# fails with undefined symbol KConfig::copyFrom); 45.20261116+ has KF6 6.32.
+image-version: latest-45.20261116.2
 
 # Replaces the default `latest`/timestamp tags with `release-candidate` (see
 # .github/workflows/promote.yml for how a build gets promoted to `latest`).
