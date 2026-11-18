@@ -146,6 +146,8 @@ check-webcam:
     echo "  Firefox:        about:config → media.webrtc.camera.allow-pipewire (set manually)"
     echo "  Chrome:         chrome://flags/#enable-webrtc-pipewire-camera (set manually)"
     echo "  HM1092 fix:     $([ -f /etc/modprobe.d/kompassos-ipu-bridge-hm1092.conf ] && echo 'enabled' || echo 'not enabled') (see 'just enable-webcam-hm1092-fix')"
+    # The patched module is built out-of-tree, so it carries the O taint flag.
+    echo "  Patched module: $(grep -q O /sys/module/ipu_bridge/taint 2>/dev/null && echo 'loaded' || echo 'not loaded (stock ipu_bridge or none)')"
 
 # Fix IPU6 webcam on kernel 7.3+ when an HM1092 IR sensor is present (issue #117)
 [group('Hardware')]
@@ -154,7 +156,7 @@ enable-webcam-hm1092-fix:
     set -euo pipefail
     source /usr/lib/ujust/ujust.sh
 
-    MOD="/usr/lib/kompassos/kmods/$(uname -r)/ipu-bridge.ko"
+    MOD="/usr/lib/modules/$(uname -r)/kompassos/ipu-bridge.ko.kompassos"
     CERT=/usr/share/kompassos/mok/kompassos-mok.der
     CONF=/etc/modprobe.d/kompassos-ipu-bridge-hm1092.conf
 
@@ -196,7 +198,7 @@ enable-webcam-hm1092-fix:
     printf '%s\n' \
         '# KompassOS: ipu-bridge without the HIMX1092 entry (issue #117).' \
         '# Falls back to the stock module if the patched one is missing or rejected.' \
-        'install ipu_bridge /usr/sbin/insmod /usr/lib/kompassos/kmods/$(uname -r)/ipu-bridge.ko $CMDLINE_OPTS 2>/dev/null || /usr/sbin/modprobe --ignore-install ipu_bridge $CMDLINE_OPTS' \
+        'install ipu_bridge /usr/sbin/insmod /usr/lib/modules/$(uname -r)/kompassos/ipu-bridge.ko.kompassos $CMDLINE_OPTS 2>/dev/null || /usr/sbin/modprobe --ignore-install ipu_bridge $CMDLINE_OPTS' \
         | sudo tee "$CONF" >/dev/null
 
     echo ""
