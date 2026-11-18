@@ -55,6 +55,18 @@ enable-webcam:
             systemctl --user daemon-reload
         fi
 
+        # libcamera's GPU debayering draws a purple horizontal line across the
+        # image (seen on Intel Arc / Meteor Lake with ov02c10). CPU debayering
+        # has no such artefact and costs ~10% CPU while the camera is in use.
+        echo ""
+        if $(gum confirm "Use CPU image processing? (fixes a purple line in the image, ~10% CPU while the camera is on)"); then
+            echo "${blue}Switching libcamera soft-ISP to CPU...${normal}"
+            mkdir -p ~/.config/systemd/user/wireplumber.service.d/
+            printf '[Service]\nEnvironment=LIBCAMERA_SOFTISP_MODE=cpu\n' \
+                > ~/.config/systemd/user/wireplumber.service.d/60-softisp-cpu.conf
+            systemctl --user daemon-reload
+        fi
+
         # Restart WirePlumber
         echo "${blue}Restarting WirePlumber...${normal}"
         systemctl --user restart wireplumber
@@ -77,7 +89,7 @@ enable-webcam:
         echo ""
         echo "  Teams for Linux (Flatpak):"
         echo "    Edit ~/.var/app/com.github.IsmaelMartinez.teams_for_linux/config/teams-for-linux/config.json"
-        echo '    Add: { "electronCLIFlags": [["enable-features", "WebRtcPipeWireCamera"]] }'
+        echo '    Add: { "performance": { "electronCLIFlags": [["enable-features", "WebRtcPipeWireCamera"]] } }'
         echo "    Restart Teams for Linux"
         echo ""
         echo "Test: firefox https://mozilla.github.io/webrtc-landing/gum_test.html"
@@ -98,6 +110,7 @@ disable-webcam:
         echo "${blue}Removing WirePlumber config...${normal}"
         rm -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf
         rm -f ~/.config/systemd/user/wireplumber.service.d/50-libcamera-egl.conf
+        rm -f ~/.config/systemd/user/wireplumber.service.d/60-softisp-cpu.conf
         systemctl --user daemon-reload
 
         # Restart WirePlumber
@@ -143,6 +156,8 @@ check-webcam:
     echo "Config:"
     echo "  WirePlumber:    $([ -f ~/.config/wireplumber/wireplumber.conf.d/50-libcamera.conf ] && echo 'applied' || echo 'not applied')"
     echo "  Nvidia EGL fix: $([ -f ~/.config/systemd/user/wireplumber.service.d/50-libcamera-egl.conf ] && echo 'applied' || echo 'not applied')"
+    echo "  Soft-ISP:       $([ -f ~/.config/systemd/user/wireplumber.service.d/60-softisp-cpu.conf ] && echo 'CPU' || echo 'GPU (default)')"
+    echo "  Tuning file:    $(ls /etc/libcamera/ipa/simple/ov02c10.yaml /usr/share/libcamera/ipa/simple/ov02c10.yaml 2>/dev/null | head -1 || true)"
     echo "  Firefox:        about:config → media.webrtc.camera.allow-pipewire (set manually)"
     echo "  Chrome:         chrome://flags/#enable-webrtc-pipewire-camera (set manually)"
     echo "  HM1092 fix:     $([ -f /etc/modprobe.d/kompassos-ipu-bridge-hm1092.conf ] && echo 'enabled' || echo 'not enabled') (see 'just enable-webcam-hm1092-fix')"
