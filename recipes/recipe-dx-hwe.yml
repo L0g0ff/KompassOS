@@ -22,4 +22,15 @@ modules:
   - from-file: common-files.yml
   - from-file: common-scripts.yml
   - from-file: common-dnf.yml
+  # Patched ipu-bridge.ko without HIMX1092 (opt-in webcam fix, issue #117).
+  # Not in common-scripts.yml: the Surface variant runs its own kernel.
+  - type: script
+    secrets:
+      - type: env
+        name: KOMPASSOS_MOK_KEY
+        mount:
+          type: env
+          name: KOMPASSOS_MOK_KEY
+    scripts:
+      - build_ipu_bridge_hm1092_fix.sh
   - from-file: common-finalize.yml
