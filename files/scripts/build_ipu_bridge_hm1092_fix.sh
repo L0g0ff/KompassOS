@@ -11,8 +11,8 @@
 #
 # The module is built from the exact Fedora kernel source of the image kernel
 # (Fedora patches ipu-bridge.c heavily, so vanilla kernel.org source is not
-# usable), signed with the KompassOS MOK key and installed OUTSIDE
-# /usr/lib/modules, so it never replaces the stock module by default. Users
+# usable), signed with the KompassOS MOK key and installed under a name depmod
+# ignores, so it never replaces the stock module by default. Users
 # opt in with `ujust enable-webcam-hm1092-fix`, which enrolls the MOK cert and
 # adds a modprobe.d install rule with fallback to the stock module.
 #
@@ -40,7 +40,11 @@ REL=$(rpm -q kernel-core --qf '%{RELEASE}')
 MAJMIN=$(cut -d. -f1-2 <<<"$VER")
 KDIR=/usr/src/kernels/$KVER
 STOCK_KO=$(find "/usr/lib/modules/$KVER" -name 'ipu-bridge.ko*' -print -quit)
-DEST=/usr/lib/kompassos/kmods/$KVER
+# Must live under /usr/lib/modules: SELinux only lets kmod_t load files
+# labelled modules_object_t (elsewhere it gets lib_t and insmod is denied).
+# The non-.ko suffix keeps depmod from indexing it; otherwise depmod prefers
+# it over the stock module and the fix would no longer be opt-in.
+DEST=/usr/lib/modules/$KVER/kompassos/ipu-bridge.ko.kompassos
 
 echo "Kernel: $KVER"
 [[ -d $KDIR ]] || { echo "ERROR: kernel-devel for $KVER missing ($KDIR)" >&2; exit 1; }
@@ -121,5 +125,5 @@ fi
 rm -f "$WORK/mok.key"
 modinfo -F signer "$WORK/fixed/ipu-bridge.ko" | grep -q . || { echo "ERROR: module not signed" >&2; exit 1; }
 
-install -D -m 0644 "$WORK/fixed/ipu-bridge.ko" "$DEST/ipu-bridge.ko"
-echo "Installed patched ipu-bridge.ko to $DEST (signer: $(modinfo -F signer "$DEST/ipu-bridge.ko"))"
+install -D -m 0644 "$WORK/fixed/ipu-bridge.ko" "$DEST"
+echo "Installed patched ipu-bridge to $DEST (signer: $(modinfo -F signer "$WORK/fixed/ipu-bridge.ko"))"
