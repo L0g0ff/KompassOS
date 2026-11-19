@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: CC0-1.0
+# libcamera soft-ISP tuning for the OmniVision OV02C10 (Intel IPU6), issue #117.
+# libcamera ships no ov02c10.yaml and falls back to uncalibrated.yaml, which
+# gives a milky, low-contrast image.
+# - BlackLevel: subtracts the sensor pedestal (removes the haze).
+# - Ccm: hand-tuned, NOT lab-calibrated. Based on
+#   github.com/hfb0/galaxy-book-ipu6-ov02c10-linux (CC0), with the blue row
+#   made neutral (sum 1.0): the original -15% blue gave a yellow/green cast on
+#   the Dell XPS 14 9440 module.
+# A local copy in /etc/libcamera/ipa/simple/ takes precedence over this file.
+%YAML 1.1
+---
+version: 1
+algorithms:
+  - BlackLevel:
+      blackLevel: 4096
+  - Awb:
+  - Ccm:
+      ccms:
+        - ct: 2860
+          ccm: [ 1.35, -0.20, -0.15,  -0.15, 1.30, -0.15,  -0.05, -0.20, 1.25 ]
+        - ct: 6500
+          ccm: [ 1.35, -0.20, -0.15,  -0.15, 1.30, -0.15,  -0.05, -0.20, 1.25 ]
+  - Adjust:
+  - Agc:
+...
