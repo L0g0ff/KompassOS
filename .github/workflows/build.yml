@@ -36,7 +36,7 @@ jobs:
       - name: Build Custom Image
         id: build
         continue-on-error: true
-        uses: blue-build/github-action@v1.13
+        uses: blue-build/github-action@v1.14
         env:
           # PEM key that signs the opt-in ipu-bridge webcam fix (issue #117).
           KOMPASSOS_MOK_KEY: ${{ secrets.KOMPASSOS_MOK_KEY }}
@@ -56,7 +56,7 @@ jobs:
 
       - name: Retry Build Custom Image
         if: steps.build.outcome == 'failure'
-        uses: blue-build/github-action@v1.13
+        uses: blue-build/github-action@v1.14
         env:
           KOMPASSOS_MOK_KEY: ${{ secrets.KOMPASSOS_MOK_KEY }}
         with:
